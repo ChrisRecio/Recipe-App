@@ -1,43 +1,42 @@
-// Copyright 2018 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 import 'package:flutter/material.dart';
+import 'tempDB.dart';
+import 'My Widgets/ListCard.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Welcome to Flutter',
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Welcome to Flutter'),
-        ),
-        body: const Center(
-          child: Text('Hello World',
-          style: TextStyle(fontSize: 50),),
-        ),
+      title: 'Recipe List',
+      theme: ThemeData(
+        primarySwatch: Colors.green,
       ),
+      home: HomePage(title: 'Recipe List'),
     );
   }
 }
 
-class Test extends StatefulWidget {
-  const Test({Key? key}) : super(key: key);
+class HomePage extends StatelessWidget {
+  HomePage({Key? key, required this.title}) : super(key: key);
+
+  final String title;
+  List _recipes = getFoodList();
 
   @override
-  State<Test> createState() => _TestState();
-}
+  Widget build(BuildContext context){
+    return Scaffold(
+      body: ListView.builder(itemCount: _recipes.length, itemBuilder: (context, index){
 
-class _TestState extends State<Test> {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
+        return ListCard(child: _recipes[index].getName());
+        
+      }),
+    );
   }
 }
+
