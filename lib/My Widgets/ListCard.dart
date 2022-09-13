@@ -4,9 +4,7 @@ class ListCard extends StatelessWidget{
 
   final child;
 
-  ListCard({required this.child});
-
-
+  const ListCard({required this.child});
 
   @override
   Widget build(BuildContext context){
