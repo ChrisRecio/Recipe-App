@@ -1,75 +1,69 @@
 import 'package:flutter/material.dart';
 import 'My Widgets/NavigationDrawer.dart';
 
-class CounterDisplay extends StatelessWidget {
-  const CounterDisplay({required this.count, super.key});
-
-  final int count;
+class AddRecipe extends StatefulWidget {
+  const AddRecipe({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Text('Count: $count');
+  State<StatefulWidget> createState() {
+    return AddRecipeState();
   }
 }
 
-class CounterIncrementor extends StatelessWidget {
-  const CounterIncrementor({required this.onPressed, super.key});
+class AddRecipeState extends State<AddRecipe> {
+  late String _name;
+  late Image _image;
+  late List _ingredients;
+  late List _steps;
+  late String _description;
 
-  final VoidCallback onPressed;
+  final GlobalKey<FormState> _globalKey = GlobalKey<FormState>();
 
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      child: const Text('Increment'),
-    );
+  Widget _buildNameField() {
+    return TextFormField();
   }
-}
 
-class Counter extends StatefulWidget {
-  const Counter({super.key});
+  Widget _buildImageField() {
+    return TextFormField();
+  }
 
-  @override
-  State<Counter> createState() => _CounterState();
-}
+  Widget _buildIngredientsField() {
+    return TextFormField();
+  }
 
-class _CounterState extends State<Counter> {
-  int _counter = 0;
+  Widget _buildStepsField() {
+    return TextFormField();
+  }
 
-  void _increment() {
-    setState(() {
-      ++_counter;
-    });
+  Widget _buildDescriptionField() {
+    return TextFormField();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        CounterIncrementor(onPressed: _increment),
-        const SizedBox(width: 16),
-        CounterDisplay(count: _counter),
-      ],
-    );
-  }
-}
-
-class AddRecipe extends StatelessWidget {
-  AddRecipe({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context){
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('New Recipe'),
-        backgroundColor: Colors.blue.shade700,
-      ),
+      appBar: AppBar(title: const Text('Add Recipe')),
       drawer: const NavigationDrawer(),
-      body: const MaterialApp(
-        home: Scaffold(
-          body: Center(
-            child: Counter(),
+      body: Container(
+        margin: EdgeInsets.all(24),
+        child: Form(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              _buildNameField(),
+              _buildImageField(),
+              _buildIngredientsField(),
+              _buildStepsField(),
+              _buildDescriptionField(),
+              const SizedBox(height: 100),
+              TextButton(
+                style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.all<Color>(Colors.green),
+                ),
+                onPressed: () => { },
+                child: const Text('Submit'),
+              )
+            ],
           ),
         ),
       ),
