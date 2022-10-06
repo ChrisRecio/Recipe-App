@@ -11,16 +11,26 @@ class AddRecipe extends StatefulWidget {
 }
 
 class AddRecipeState extends State<AddRecipe> {
-  late String _name;
+  String _name = '';
   late Image _image;
   late List _ingredients;
   late List _steps;
   late String _description;
 
-  final GlobalKey<FormState> _globalKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   Widget _buildNameField() {
-    return TextFormField();
+    return TextFormField(
+      decoration: const InputDecoration(labelText: 'name'),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Name cannot be empty!';
+        }
+      },
+      onSaved: (value) {
+        _name = value!;
+      },
+    );
   }
 
   Widget _buildImageField() {
@@ -47,20 +57,27 @@ class AddRecipeState extends State<AddRecipe> {
       body: Container(
         margin: EdgeInsets.all(24),
         child: Form(
+          key: _formKey,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               _buildNameField(),
-              _buildImageField(),
-              _buildIngredientsField(),
-              _buildStepsField(),
-              _buildDescriptionField(),
+              // _buildImageField(),
+              // _buildIngredientsField(),
+              // _buildStepsField(),
+              // _buildDescriptionField(),
               const SizedBox(height: 100),
               TextButton(
                 style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all<Color>(Colors.green),
+                  foregroundColor:
+                      MaterialStateProperty.all<Color>(Colors.green),
                 ),
-                onPressed: () => { },
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    return;
+                  }
+                  _formKey.currentState?.save();
+                },
                 child: const Text('Submit'),
               )
             ],
