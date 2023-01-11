@@ -34,7 +34,7 @@ class AddRecipeState extends State<AddRecipe> {
 
       setState(() => this.image = imageTemp);
     } on PlatformException catch (e) {
-      print('Failed to pick image: $e');
+      print('Failed to pick image: $e'); // REMOVE BEFORE PROD
     }
   }
 
@@ -48,7 +48,7 @@ class AddRecipeState extends State<AddRecipe> {
 
       setState(() => this.image = imageTemp);
     } on PlatformException catch (e) {
-      print('Failed to pick image: $e');
+      print('Failed to pick image: $e'); // REMOVE BEFORE PROD
     }
   }
 
@@ -120,6 +120,7 @@ class AddRecipeState extends State<AddRecipe> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                // ------------------------------------------------ NEED TO DESIGN UI
                 _buildImageField(),
                 const SizedBox(height: 16),
                 _buildNameField(),
