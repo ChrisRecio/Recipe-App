@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'tempDB.dart';
-import 'My Widgets/ListCard.dart';
-import 'My Widgets/NavigationDrawer.dart';
+import 'repository/temp_db.dart';
+import 'screens/my_widgets/list_card.dart';
+import 'screens/my_widgets/navigation_drawer.dart';
 
 void main() {
   runApp(const MyApp());

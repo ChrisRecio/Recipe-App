@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class Recipe{
+class recipe{
 
   int _id = 0;
   String _name = "";
@@ -9,7 +9,7 @@ class Recipe{
   List _steps = [];
   String _description = "";
 
-  Recipe(this._id, this._name, this._image, this._ingredients, this._steps, this._description);
+  recipe(this._id, this._name, this._image, this._ingredients, this._steps, this._description);
 
   int getId(){
     return _id;

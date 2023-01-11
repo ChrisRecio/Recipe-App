@@ -1,11 +1,14 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'My Widgets/NavigationDrawer.dart';
+import '../bloc/recipe.dart';
+import '../repository/temp_db.dart';
+import '../screens/my_widgets/navigation_drawer.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/services.dart';
 
 class AddRecipe extends StatefulWidget {
   const AddRecipe({super.key});
+
 
   @override
   State<StatefulWidget> createState() {
@@ -19,7 +22,7 @@ class AddRecipeState extends State<AddRecipe> {
   late List _ingredients;
   late List _steps;
   late String _description;
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>();
 
   Future pickImage() async {
     try {
@@ -76,19 +79,21 @@ class AddRecipeState extends State<AddRecipe> {
     );
   }
 
-  Widget _buildNameField() {
-    return TextFormField(
-      decoration: const InputDecoration(labelText: 'name'),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Name cannot be empty!';
-        }
-      },
-      onSaved: (value) {
-        _name = value!;
-      },
-    );
-  }
+  Widget _buildNameField() => TextFormField(
+    decoration: const InputDecoration(
+      labelText: 'Name',
+      border: OutlineInputBorder(),
+    ),
+    validator: (value) {
+      if (value == null || value.isEmpty) {
+        return 'Please enter the name of the recipe';
+      }
+      return null;
+    },
+    maxLength: 30,
+    onSaved: (value) => setState(() => _name = value!),
+  );
+
 
   Widget _buildIngredientsField() {
     return TextFormField();
@@ -110,12 +115,13 @@ class AddRecipeState extends State<AddRecipe> {
       body: Container(
         margin: const EdgeInsets.all(24),
         child: Form(
-          key: _formKey,
+          key: formKey,
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 _buildImageField(),
+                const SizedBox(height: 16),
                 _buildNameField(),
                 // _buildIngredientsField(),
                 // _buildStepsField(),
@@ -127,10 +133,28 @@ class AddRecipeState extends State<AddRecipe> {
                     MaterialStateProperty.all<Color>(Colors.green),
                   ),
                   onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      return;
+
+                    final isValid = formKey.currentState?.validate();
+
+                    if(isValid == true){
+                      formKey.currentState?.save();
+
+                      final int recipesLength = getListLength();
+                      recipe newRecipe = recipe(recipesLength, _name, Image.asset('assets/images/default.jpg'), [], [], '');
+                      String temp = newRecipe.getName();
+
+                      final message = 'Name: $temp';
+                      final snackBar = SnackBar(content: Text(
+                        message,
+                        style: const TextStyle(fontSize: 20),
+                      ),
+                        backgroundColor: Colors.orange,
+                      );
+
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     }
-                    _formKey.currentState?.save();
+
+
                   },
                   child: const Text('Submit'),
                 )

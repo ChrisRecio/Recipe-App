@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:recipe_app/main.dart';
-import 'package:recipe_app/AddRecipe.dart';
+import 'package:recipe_app/screens/add_recipe.dart';
 
 class NavigationDrawer extends StatelessWidget{
   const NavigationDrawer({Key? key}) : super(key: key);
@@ -47,7 +47,7 @@ class NavigationDrawer extends StatelessWidget{
           title: const Text('Add New Recipe'),
           onTap: () =>
               Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (context) => AddRecipe())),
+                  builder: (context) => const AddRecipe())),
         ),
 
       ],
