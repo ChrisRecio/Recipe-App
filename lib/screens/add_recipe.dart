@@ -1,15 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
+
 import '../bloc/recipe.dart';
 import '../repository/temp_db.dart';
 import '../screens/my_widgets/navigation_drawer.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:flutter/services.dart';
 
 class AddRecipe extends StatefulWidget {
   const AddRecipe({super.key});
-
 
   @override
   State<StatefulWidget> createState() {
@@ -83,80 +84,79 @@ class AddRecipeState extends State<AddRecipe> {
   }
 
   Widget _buildNameField() => TextFormField(
-    decoration: const InputDecoration(
-      labelText: 'Name',
-      border: OutlineInputBorder(),
-    ),
-    validator: (value) {
-      if (value == null || value.isEmpty) {
-        return 'Please enter the name of the recipe';
-      }
-      return null;
-    },
-    maxLength: 30,
-    onSaved: (value) => setState(() => _name = value!),
-  );
+        decoration: const InputDecoration(
+          labelText: 'Name',
+          border: OutlineInputBorder(),
+        ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter the name of the recipe';
+          }
+          return null;
+        },
+        maxLength: 30,
+        onSaved: (value) => setState(() => _name = value!),
+      );
 
   Widget _buildServingsField() => TextFormField(
-    decoration: const InputDecoration(
-      labelText: 'Servings',
-      border: OutlineInputBorder(),
-    ),
-    keyboardType: TextInputType.number,
-    validator: (value) {
-      if (value == null || value.isEmpty || int.parse(value) <= 0) {
-        return 'Servings must be greater or equal to 1';
-      }
-      return null;
-    },
-    maxLength: 30,
-    onSaved: (value) => setState(() => _servings = int.parse(value!)),
-  );
-
+        decoration: const InputDecoration(
+          labelText: 'Servings',
+          border: OutlineInputBorder(),
+        ),
+        keyboardType: TextInputType.number,
+        validator: (value) {
+          if (value == null || value.isEmpty || int.parse(value) <= 0) {
+            return 'Servings must be greater or equal to 1';
+          }
+          return null;
+        },
+        maxLength: 30,
+        onSaved: (value) => setState(() => _servings = int.parse(value!)),
+      );
 
   Widget _buildIngredientsField() => TextFormField(
-    decoration: const InputDecoration(
-      labelText: 'Ingredients',
-      border: OutlineInputBorder(),
-    ),
-    keyboardType: TextInputType.multiline,
-    maxLines: null,
-    validator: (value) {
-      if (value == null || value.isEmpty) {
-        return 'Please enter at least 1 ingredient';
-      }
-      return null;
-    },
-    onSaved: (value) => setState((){
-      _ingredients = ls.convert(value!);
-    }),
-  );
+        decoration: const InputDecoration(
+          labelText: 'Ingredients',
+          border: OutlineInputBorder(),
+        ),
+        keyboardType: TextInputType.multiline,
+        maxLines: null,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter at least 1 ingredient';
+          }
+          return null;
+        },
+        onSaved: (value) => setState(() {
+          _ingredients = ls.convert(value!);
+        }),
+      );
 
   Widget _buildStepsField() => TextFormField(
-    decoration: const InputDecoration(
-      labelText: 'Steps',
-      border: OutlineInputBorder(),
-    ),
-    keyboardType: TextInputType.multiline,
-    maxLines: null,
-    validator: (value) {
-      if (value == null || value.isEmpty) {
-        return 'Please enter at least 1 step';
-      }
-      return null;
-    },
-    // onSaved: (value) => setState(() => _name = value!),
-  );
+        decoration: const InputDecoration(
+          labelText: 'Steps',
+          border: OutlineInputBorder(),
+        ),
+        keyboardType: TextInputType.multiline,
+        maxLines: null,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter at least 1 step';
+          }
+          return null;
+        },
+        // onSaved: (value) => setState(() => _name = value!),
+      );
 
   Widget _buildDescriptionField() => TextFormField(
-    decoration: const InputDecoration(
-      labelText: 'Ingredients',
-      border: OutlineInputBorder(),
-    ),
-    keyboardType: TextInputType.multiline,
-    maxLines: null,
-    // onSaved: (value) => setState(() => _name = value!),
-  );
+        decoration: const InputDecoration(
+          labelText: 'Ingredients',
+          border: OutlineInputBorder(),
+        ),
+        keyboardType: TextInputType.multiline,
+        maxLines: null,
+        // onSaved: (value) => setState(() => _name = value!),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -187,32 +187,37 @@ class AddRecipeState extends State<AddRecipe> {
                 TextButton(
                   style: ButtonStyle(
                     foregroundColor:
-                    MaterialStateProperty.all<Color>(Colors.green),
+                        MaterialStateProperty.all<Color>(Colors.green),
                   ),
                   onPressed: () {
-
                     final isValid = formKey.currentState?.validate();
 
-                    if(isValid == true){
+                    if (isValid == true) {
                       formKey.currentState?.save();
 
                       final int recipesLength = getListLength();
-                      recipe newRecipe = recipe(recipesLength, _name, Image.asset('assets/images/default.jpg'), _servings, _ingredients, [], '');
+                      Recipe newRecipe = Recipe(
+                          recipesLength,
+                          _name,
+                          Image.asset('assets/images/default.jpg'),
+                          _servings,
+                          _ingredients,
+                          [],
+                          '');
                       String temp = newRecipe.getIngredients()[0];
                       print(newRecipe.getIngredients());
 
                       final message = 'Name: $temp';
-                      final snackBar = SnackBar(content: Text(
-                        message,
-                        style: const TextStyle(fontSize: 20),
-                      ),
+                      final snackBar = SnackBar(
+                        content: Text(
+                          message,
+                          style: const TextStyle(fontSize: 20),
+                        ),
                         backgroundColor: Colors.orange,
                       );
 
                       ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     }
-
-
                   },
                   child: const Text('Submit'),
                 )
