@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../bloc/recipe.dart';
@@ -18,11 +19,13 @@ class AddRecipe extends StatefulWidget {
 
 class AddRecipeState extends State<AddRecipe> {
   File? image;
-  String _name = '';
-  late List _ingredients;
-  late List _steps;
+  late String _name = '';
+  late int _servings = 0;
+  late List<String> _ingredients;
+  late List<String> _steps;
   late String _description;
   final formKey = GlobalKey<FormState>();
+  LineSplitter ls = const LineSplitter();
 
   Future pickImage() async {
     try {
@@ -94,18 +97,66 @@ class AddRecipeState extends State<AddRecipe> {
     onSaved: (value) => setState(() => _name = value!),
   );
 
+  Widget _buildServingsField() => TextFormField(
+    decoration: const InputDecoration(
+      labelText: 'Servings',
+      border: OutlineInputBorder(),
+    ),
+    keyboardType: TextInputType.number,
+    validator: (value) {
+      if (value == null || value.isEmpty || int.parse(value) <= 0) {
+        return 'Servings must be greater or equal to 1';
+      }
+      return null;
+    },
+    maxLength: 30,
+    onSaved: (value) => setState(() => _servings = int.parse(value!)),
+  );
 
-  Widget _buildIngredientsField() {
-    return TextFormField();
-  }
 
-  Widget _buildStepsField() {
-    return TextFormField();
-  }
+  Widget _buildIngredientsField() => TextFormField(
+    decoration: const InputDecoration(
+      labelText: 'Ingredients',
+      border: OutlineInputBorder(),
+    ),
+    keyboardType: TextInputType.multiline,
+    maxLines: null,
+    validator: (value) {
+      if (value == null || value.isEmpty) {
+        return 'Please enter at least 1 ingredient';
+      }
+      return null;
+    },
+    onSaved: (value) => setState((){
+      _ingredients = ls.convert(value!);
+    }),
+  );
 
-  Widget _buildDescriptionField() {
-    return TextFormField();
-  }
+  Widget _buildStepsField() => TextFormField(
+    decoration: const InputDecoration(
+      labelText: 'Steps',
+      border: OutlineInputBorder(),
+    ),
+    keyboardType: TextInputType.multiline,
+    maxLines: null,
+    validator: (value) {
+      if (value == null || value.isEmpty) {
+        return 'Please enter at least 1 step';
+      }
+      return null;
+    },
+    // onSaved: (value) => setState(() => _name = value!),
+  );
+
+  Widget _buildDescriptionField() => TextFormField(
+    decoration: const InputDecoration(
+      labelText: 'Ingredients',
+      border: OutlineInputBorder(),
+    ),
+    keyboardType: TextInputType.multiline,
+    maxLines: null,
+    // onSaved: (value) => setState(() => _name = value!),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -124,10 +175,15 @@ class AddRecipeState extends State<AddRecipe> {
                 _buildImageField(),
                 const SizedBox(height: 16),
                 _buildNameField(),
-                // _buildIngredientsField(),
+                const SizedBox(height: 16),
+                _buildServingsField(),
+                const SizedBox(height: 16),
+                _buildIngredientsField(),
+                const SizedBox(height: 16),
                 // _buildStepsField(),
+                // const SizedBox(height: 16),
                 // _buildDescriptionField(),
-                const SizedBox(height: 100),
+                const SizedBox(height: 16),
                 TextButton(
                   style: ButtonStyle(
                     foregroundColor:
@@ -141,8 +197,9 @@ class AddRecipeState extends State<AddRecipe> {
                       formKey.currentState?.save();
 
                       final int recipesLength = getListLength();
-                      recipe newRecipe = recipe(recipesLength, _name, Image.asset('assets/images/default.jpg'), [], [], '');
-                      String temp = newRecipe.getName();
+                      recipe newRecipe = recipe(recipesLength, _name, Image.asset('assets/images/default.jpg'), _servings, _ingredients, [], '');
+                      String temp = newRecipe.getIngredients()[0];
+                      print(newRecipe.getIngredients());
 
                       final message = 'Name: $temp';
                       final snackBar = SnackBar(content: Text(

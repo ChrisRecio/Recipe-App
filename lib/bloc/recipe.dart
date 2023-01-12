@@ -5,11 +5,12 @@ class recipe{
   int _id = 0;
   String _name = "";
   Image _image = Image.asset('assets/images/default.jpg');
-  List _ingredients = [];
-  List _steps = [];
+  int _servings = 0;
+  List<String> _ingredients = [];
+  List<String> _steps = [];
   String _description = "";
 
-  recipe(this._id, this._name, this._image, this._ingredients, this._steps, this._description);
+  recipe(this._id, this._name, this._image, this._servings, this._ingredients, this._steps, this._description);
 
   int getId(){
     return _id;
@@ -21,6 +22,10 @@ class recipe{
 
   Image getImage(){
     return _image;
+  }
+
+  int getServings(){
+      return _servings;
   }
 
   List getIngredients(){
@@ -47,11 +52,15 @@ class recipe{
     _image = image;
   }
 
-  void setIngredients(List ingredients){
+  void setServings(int servings){
+    _servings = servings;
+  }
+
+  void setIngredients(List<String> ingredients){
     _ingredients = ingredients;
   }
 
-  void setSteps(List steps){
+  void setSteps(List<String> steps){
     _steps = steps;
   }
 
@@ -63,6 +72,7 @@ class recipe{
     return {
       "Id": _id,
       "Name": _name,
+      "Servings": _servings,
       "Ingredients": _ingredients,
       "Steps": _steps,
       "Description": _description,
