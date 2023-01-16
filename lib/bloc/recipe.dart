@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart';
-
 class Recipe {
   int _id = 0;
   String _name = "";
-  Image _image = Image.asset('assets/images/default.jpg');
+  // Image _image;
+  String _image;
   int _servings = 0;
   List<String> _ingredients = [];
   List<String> _steps = [];
@@ -17,6 +16,17 @@ class Recipe {
         data['ingredients'], data['steps'], data['description']);
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'name': _name,
+      'image': _image,
+      'servings': _servings,
+      'ingredients': _ingredients,
+      'steps': _steps,
+      'description': _description,
+    };
+  }
+
   int getId() {
     return _id;
   }
@@ -25,7 +35,11 @@ class Recipe {
     return _name;
   }
 
-  Image getImage() {
+  // Image getImage() {
+  //   return _image;
+  // }
+
+  String getImage() {
     return _image;
   }
 
@@ -53,7 +67,11 @@ class Recipe {
     _name = name;
   }
 
-  void setImage(Image image) {
+  // void setImage(Image image) {
+  //   _image = image;
+  // }
+
+  void setImage(String image) {
     _image = image;
   }
 
@@ -76,27 +94,5 @@ class Recipe {
   @override
   String toString() {
     return 'recipe{id: $_id, name: $_name, servings: $_servings, ingredients:$_ingredients, steps: $_steps, description: $_description}';
-  }
-
-  Map<String, dynamic> get map {
-    return {
-      "Id": _id,
-      "Name": _name,
-      "Servings": _servings,
-      "Ingredients": _ingredients,
-      "Steps": _steps,
-      "Description": _description,
-    };
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      "Id": _id,
-      "Name": _name,
-      "Servings": _servings,
-      "Ingredients": _ingredients,
-      "Steps": _steps,
-      "Description": _description,
-    };
   }
 }

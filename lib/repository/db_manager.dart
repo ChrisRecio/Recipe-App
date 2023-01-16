@@ -1,27 +1,36 @@
 import 'dart:async';
 
-import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:recipe_app/bloc/recipe.dart';
 import 'package:sqflite/sqflite.dart';
 
-void dbManager() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  final database = openDatabase(
-    join(await getDatabasesPath(), 'recipe_app.db'),
-    onCreate: (db, version) {
-      return db.execute(
-        'CREATE TABLE recipes(id INTEGER PRIMARY KEY, name TEXT, image BLOB, ingredients BLOB, steps, BLOB, description TEXT)',
+// REFERENCE
+//https://medium.flutterdevs.com/sql-database-storage-using-sqlite-in-flutter-6e2fdcc8cfb7
+
+class DbManager {
+  late Database _database;
+
+  Future openDb() async {
+    _database = await openDatabase(
+        join(await getDatabasesPath(), "RecipeApp.db"),
+        version: 1, onCreate: (Database db, int version) async {
+      await db.execute(
+        "CREATE TABLE recipes(id INTEGER PRIMARY KEY autoincrement, name TEXT, image BLOB, ingredients BLOB, steps, BLOB, description TEXT)",
       );
-    },
-    version: 1,
-  );
+    });
+    return _database;
+  }
+
+  // Insert Recipe
+  Future insertRecipe(Recipe recipe) async {
+    await openDb();
+    return await _database.insert('recipes', recipe.toJson());
+  }
 
   // Get All Recipes
-  Future<List<Recipe>> getAllRecipes() async {
-    final db = await database;
-
-    final List<Map<String, dynamic>> maps = await db.query('recipes');
+  Future<List<Recipe>> getRecipeList() async {
+    await openDb();
+    final List<Map<String, dynamic>> maps = await _database.query('recipes');
 
     return List.generate(maps.length, (i) {
       return Recipe(
@@ -35,36 +44,30 @@ void dbManager() async {
     });
   }
 
-  // Get Recipe By ID
-  Future<Recipe> getRecipeById(int id) async {
-    final db = await database;
-
-    final List<Map<String, dynamic>> maps = await db.query('recipes');
-
-    var result = await db.query("Recipes", where: "id = ", whereArgs: [id]);
-    return Recipe.fromMap(result.first);
-  }
-
-  // Insert New Recipe
-  Future<void> insertRecipe(Recipe recipe) async {
-    final db = await database;
-
-    await db.insert(
-      'recipes',
-      recipe.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+  // Get Recipe By Id
+  Future<Recipe> getRecipeById(int idInput) async {
+    await openDb();
+    // PROBABLY BROKEN
+    List<Map>? results =
+        await _database.rawQuery('SELECT * FROM recipes WHERE id=?', [idInput]);
+    Map<dynamic, dynamic> result = {};
+    for (var r in results) {
+      result.addAll(r);
+    }
+    return Recipe.fromMap(result[0]);
   }
 
   // Update Recipe
-  Future<void> updateRecipe(Recipe recipe) async {
-    final db = await database;
+  Future<int> updateRecipe(Recipe recipe) async {
+    await openDb();
+    return await _database.update('recipes', recipe.toJson(),
+        where: "id = ?", whereArgs: [recipe.getId()]);
+  }
 
-    await db.update(
-      'recipes',
-      recipe.toMap(),
-      where: 'id = ?',
-      whereArgs: [recipe.getId()],
-    );
+  // Delete Recipe
+  Future<void> deleteRecipe(Recipe recipe) async {
+    await openDb();
+    await _database
+        .delete('recipes', where: "id = ?", whereArgs: [recipe.getId()]);
   }
 }

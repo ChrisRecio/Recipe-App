@@ -110,7 +110,6 @@ class AddRecipeState extends State<AddRecipe> {
           }
           return null;
         },
-        maxLength: 30,
         onSaved: (value) => setState(() => _servings = int.parse(value!)),
       );
 
@@ -145,17 +144,19 @@ class AddRecipeState extends State<AddRecipe> {
           }
           return null;
         },
-        // onSaved: (value) => setState(() => _name = value!),
+        onSaved: (value) => setState(() {
+          _steps = ls.convert(value!);
+        }),
       );
 
   Widget _buildDescriptionField() => TextFormField(
         decoration: const InputDecoration(
-          labelText: 'Ingredients',
+          labelText: 'Description',
           border: OutlineInputBorder(),
         ),
         keyboardType: TextInputType.multiline,
         maxLines: null,
-        // onSaved: (value) => setState(() => _name = value!),
+        onSaved: (value) => setState(() => _description = value!),
       );
 
   @override
@@ -180,47 +181,46 @@ class AddRecipeState extends State<AddRecipe> {
                 const SizedBox(height: 16),
                 _buildIngredientsField(),
                 const SizedBox(height: 16),
-                // _buildStepsField(),
-                // const SizedBox(height: 16),
-                // _buildDescriptionField(),
+                _buildStepsField(),
                 const SizedBox(height: 16),
-                TextButton(
-                  style: ButtonStyle(
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.green),
-                  ),
-                  onPressed: () {
-                    final isValid = formKey.currentState?.validate();
+                _buildDescriptionField(),
+                const SizedBox(height: 16),
+                MaterialButton(
+                    color: Colors.green,
+                    child: const Text("Submit",
+                        style: TextStyle(
+                            color: Colors.white70,
+                            fontWeight: FontWeight.bold)),
+                    onPressed: () {
+                      final isValid = formKey.currentState?.validate();
 
-                    if (isValid == true) {
-                      formKey.currentState?.save();
+                      if (isValid == true) {
+                        formKey.currentState?.save();
 
-                      final int recipesLength = getListLength();
-                      Recipe newRecipe = Recipe(
-                          recipesLength,
-                          _name,
-                          Image.asset('assets/images/default.jpg'),
-                          _servings,
-                          _ingredients,
-                          [],
-                          '');
-                      String temp = newRecipe.getIngredients()[0];
-                      print(newRecipe.getIngredients());
+                        final int recipesLength = getListLength();
+                        Recipe newRecipe = Recipe(
+                            recipesLength,
+                            _name,
+                            "" /*Image.file(image!)*/,
+                            _servings,
+                            _ingredients,
+                            [],
+                            '');
+                        String temp = newRecipe.getIngredients()[0];
+                        print(newRecipe.getIngredients());
 
-                      final message = 'Name: $temp';
-                      final snackBar = SnackBar(
-                        content: Text(
-                          message,
-                          style: const TextStyle(fontSize: 20),
-                        ),
-                        backgroundColor: Colors.orange,
-                      );
+                        final message = 'Name: $temp';
+                        final snackBar = SnackBar(
+                          content: Text(
+                            message,
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                          backgroundColor: Colors.orange,
+                        );
 
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    }
-                  },
-                  child: const Text('Submit'),
-                )
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      }
+                    }),
               ],
             ),
           ),

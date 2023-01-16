@@ -1,11 +1,12 @@
-import 'package:flutter/material.dart';
-
 import '../bloc/recipe.dart';
+import 'db_manager.dart';
+
+final DbManager dbManager = DbManager();
 
 Recipe grilledCheese = Recipe(
     0,
     "Grilled Cheese",
-    Image.asset('assets/images/default.jpg'),
+    "" /*Image.asset('assets/images/default.jpg')*/,
     1,
     ["Butter", "Bread", "Cheese"],
     [
@@ -17,7 +18,7 @@ Recipe grilledCheese = Recipe(
 Recipe grilledCheese1 = Recipe(
     1,
     "Grilled Cheese 1",
-    Image.asset('assets/images/default.jpg'),
+    "" /*Image.asset('assets/images/default.jpg')*/,
     1,
     ["Butter", "Bread", "Cheese"],
     [
@@ -29,7 +30,7 @@ Recipe grilledCheese1 = Recipe(
 Recipe grilledCheese2 = Recipe(
     2,
     "Grilled Cheese 2",
-    Image.asset('assets/images/default.jpg'),
+    "" /*Image.asset('assets/images/default.jpg')*/,
     1,
     ["Butter", "Bread", "Cheese"],
     [
@@ -41,7 +42,7 @@ Recipe grilledCheese2 = Recipe(
 Recipe grilledCheese3 = Recipe(
     3,
     "Grilled Cheese 3",
-    Image.asset('assets/images/default.jpg'),
+    "" /*Image.asset('assets/images/default.jpg')*/,
     1,
     ["Butter", "Bread", "Cheese"],
     [
@@ -53,7 +54,7 @@ Recipe grilledCheese3 = Recipe(
 Recipe grilledCheese4 = Recipe(
     4,
     "Grilled Cheese 4",
-    Image.asset('assets/images/default.jpg'),
+    "" /*Image.asset('assets/images/default.jpg')*/,
     1,
     ["Butter", "Bread", "Cheese"],
     [
