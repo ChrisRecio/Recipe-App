@@ -5,9 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../bloc/recipe.dart';
-import '../repository/temp_db.dart';
-import '../screens/my_widgets/navigation_drawer.dart';
+import '../widgets/navigation_drawer.dart';
 
 class AddRecipe extends StatefulWidget {
   const AddRecipe({super.key});
@@ -197,19 +195,7 @@ class AddRecipeState extends State<AddRecipe> {
                       if (isValid == true) {
                         formKey.currentState?.save();
 
-                        final int recipesLength = getListLength();
-                        Recipe newRecipe = Recipe(
-                            recipesLength,
-                            _name,
-                            "" /*Image.file(image!)*/,
-                            _servings,
-                            _ingredients,
-                            [],
-                            '');
-                        String temp = newRecipe.getIngredients()[0];
-                        print(newRecipe.getIngredients());
-
-                        final message = 'Name: $temp';
+                        final message = 'Name: $_name';
                         final snackBar = SnackBar(
                           content: Text(
                             message,
