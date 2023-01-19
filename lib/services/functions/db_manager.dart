@@ -41,4 +41,6 @@ class DbManager {
     print(tableNames);*/
     return _db;
   }
+
+  Future close() async => _db?.close();
 }
