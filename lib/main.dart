@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:recipe_app/services/functions/db_manager.dart';
-import 'package:recipe_app/services/functions/recipe_provider.dart';
 import 'package:recipe_app/services/models/recipe.dart';
 import 'package:recipe_app/widgets/list_card.dart';
 import 'package:recipe_app/widgets/navigation_drawer.dart';
 
 void main() {
   runApp(const MyApp());
-  DbManager db = DbManager();
-  db.openDb();
 
   Recipe recipe = Recipe(
       1, "_name", "_image", 1, "_description", 1, "_prepTime", "_cookTime");
-  RecipeProvider rp = RecipeProvider();
-  rp.insert(recipe);
+  // DbManager.createRecipe(recipe);
+  getAllRecipes();
+}
+
+Future<List<Recipe>> getAllRecipes() async {
+  var allRecipes = await DbManager.getAllRecipes();
+  return Recipe.parseRecipeList(allRecipes);
 }
 
 class MyApp extends StatelessWidget {

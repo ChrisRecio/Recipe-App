@@ -20,9 +20,17 @@ class Recipe {
         data['image'],
         data['servings'],
         data['description'],
-        data['course'],
+        data['course_id'],
         data['prepTime'],
         data['cookTime']);
+  }
+
+  static List<Recipe> parseRecipeList(List<dynamic> list) {
+    final recipeList = <Recipe>[];
+    for (final item in list) {
+      recipeList.add(Recipe.fromMap(item));
+    }
+    return recipeList;
   }
 
   Map<String, dynamic> toMap() {
@@ -32,7 +40,7 @@ class Recipe {
       'image': _image,
       'servings': _servings,
       'description': _description,
-      'course': _course,
+      'courseId': _course,
       'prepTime': _prepTime,
       'cookTime': _cookTime,
     };
@@ -40,7 +48,7 @@ class Recipe {
 
   @override
   String toString() {
-    return 'recipe{id: $_id, name: $_name, servings: $_servings, description:$_description, course: $_course, prepTime: $_prepTime, cookTime: $_cookTime}';
+    return 'recipe{id: $_id, name: $_name, servings: $_servings, description:$_description, course_id: $_course, prepTime: $_prepTime, cookTime: $_cookTime}';
   }
 
   String get cookTime => _cookTime;
