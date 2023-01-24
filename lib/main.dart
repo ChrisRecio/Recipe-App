@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'tempDB.dart';
-import 'My Widgets/ListCard.dart';
-import 'My Widgets/NavigationDrawer.dart';
+import 'package:recipe_app/services/models/recipe.dart';
+import 'package:recipe_app/widgets/list_card.dart';
+import 'package:recipe_app/widgets/navigation_drawer.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
 
   // This widget is the root of your application.
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Recipe List',
       theme: ThemeData(
@@ -27,22 +27,36 @@ class HomePage extends StatelessWidget {
   HomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
-  final List _recipes = getFoodList();
+  Recipe? recipe;
+  List<Recipe>? recipeList;
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
+    // TEMPORARY DISPLAY UNTIL I DESIGN A HOMEPAGE UI
+
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
         backgroundColor: Colors.blue.shade700,
       ),
       drawer: const NavigationDrawer(),
-      body: ListView.builder(itemCount: _recipes.length, itemBuilder: (context, index){
-
-        return ListCard(child: _recipes[index].getName());
-        
+      body: FutureBuilder(builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          recipeList = (snapshot.data as List<Recipe>);
+          return ListView.builder(
+              itemCount: recipeList?.length,
+              itemBuilder: (context, index) {
+                Recipe recipe = recipeList![index];
+                return const ListCard(child: "Recipe");
+              });
+        } else {
+          return ListView.builder(
+              itemCount: 1,
+              itemBuilder: (context, index) {
+                return const ListCard(child: "Recipe");
+              });
+        }
       }),
     );
   }
 }
-
