@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:recipe_app/main.dart';
 import 'package:recipe_app/pages/add_recipe.dart';
+import 'package:recipe_app/pages/view_recipe_list.dart';
 
 class NavigationDrawer extends StatelessWidget {
   const NavigationDrawer({Key? key}) : super(key: key);
@@ -39,7 +40,7 @@ class NavigationDrawer extends StatelessWidget {
               title: const Text('Recipe List'),
               onTap: () => Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
-                      builder: (context) => HomePage(title: 'Recipe List'))),
+                      builder: (context) => const ViewRecipeList())),
             ),
             ListTile(
               leading: const Icon(Icons.plus_one_outlined),

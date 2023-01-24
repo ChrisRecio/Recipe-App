@@ -17,14 +17,20 @@ class AddRecipe extends StatefulWidget {
 }
 
 class AddRecipeState extends State<AddRecipe> {
+  late String _name;
   File? image;
-  late String _name = '';
-  late int _servings = 0;
+  late int _servings;
+  late String _description;
+  late int _course;
+  late String _prepTime;
+  late String _cookTime;
   late List<String> _ingredients;
   late List<String> _steps;
-  late String _description;
+  static const List<String> timeDuration = <String>['Minutes', 'Hours'];
+  String dropdownValue = timeDuration.first;
+
   final formKey = GlobalKey<FormState>();
-  LineSplitter ls = const LineSplitter();
+  final LineSplitter ls = const LineSplitter();
 
   Future pickImage() async {
     try {
@@ -92,7 +98,6 @@ class AddRecipeState extends State<AddRecipe> {
           }
           return null;
         },
-        maxLength: 30,
         onSaved: (value) => setState(() => _name = value!),
       );
 
@@ -157,6 +162,61 @@ class AddRecipeState extends State<AddRecipe> {
         onSaved: (value) => setState(() => _description = value!),
       );
 
+  Widget _buildPrepTimeField() => TextFormField(
+        decoration: const InputDecoration(
+          labelText: 'Prep Time',
+          border: OutlineInputBorder(),
+        ),
+        keyboardType: TextInputType.number,
+        validator: (value) {
+          if (value == null || value.isEmpty || int.parse(value) <= 0) {
+            return 'Prep Time must be longer than 0 minutes';
+          }
+          return null;
+        },
+        onSaved: (value) =>
+            setState(() => _prepTime = int.parse(value!) as String),
+      );
+
+  Widget _buildCookTimeField() => TextFormField(
+        decoration: const InputDecoration(
+          labelText: 'Cook Time',
+          border: OutlineInputBorder(),
+        ),
+        keyboardType: TextInputType.number,
+        validator: (value) {
+          if (value == null || value.isEmpty || int.parse(value) <= 0) {
+            return 'Cook Time must be longer than 0 minutes';
+          }
+          return null;
+        },
+        onSaved: (value) =>
+            setState(() => _cookTime = int.parse(value!) as String),
+      );
+
+  Widget _buildTimeDropDown() => DropdownButton<String>(
+        value: timeDuration.first,
+        icon: const Icon(Icons.arrow_downward),
+        elevation: 16,
+        style: const TextStyle(color: Colors.deepPurple),
+        underline: Container(
+          height: 2,
+          color: Colors.deepPurpleAccent,
+        ),
+        onChanged: (String? value) {
+          // This is called when the user selects an item.
+          setState(() {
+            dropdownValue = value!;
+          });
+        },
+        items: timeDuration.map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
+      );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -183,6 +243,17 @@ class AddRecipeState extends State<AddRecipe> {
                 const SizedBox(height: 16),
                 _buildDescriptionField(),
                 const SizedBox(height: 16),
+                Row(children: <Widget>[
+                  Flexible(child: _buildPrepTimeField()),
+                  const SizedBox(width: 10),
+                  Flexible(child: _buildTimeDropDown())
+                ]),
+                const SizedBox(height: 16),
+                Row(children: <Widget>[
+                  Flexible(child: _buildCookTimeField()),
+                  const SizedBox(width: 10),
+                  Flexible(child: _buildTimeDropDown())
+                ]),
                 MaterialButton(
                     color: Colors.green,
                     child: const Text("Submit",

@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:sqflite/sqflite.dart';
 
-import '../models/recipe.dart';
-
 // REFERENCE
 //https://medium.flutterdevs.com/sql-database-storage-using-sqlite-in-flutter-6e2fdcc8cfb7
 //https://www.kindacode.com/article/flutter-sqlite/
@@ -25,12 +23,6 @@ class DbManager {
     batch.execute(_recipeTable);
     batch.execute(_recipeStepTable);
     await batch.commit();
-    // Print table names upon creation
-/*    var tableNames = (await db
-            .query('sqlite_master', where: 'type = ?', whereArgs: ['table']))
-        .map((row) => row['name'] as String)
-        .toList(growable: false);
-    print(tableNames);*/
   }
 
   static Future<Database> db() async {
@@ -43,25 +35,13 @@ class DbManager {
     );
   }
 
-  // Create Recipe
-  static Future<int> createRecipe(Recipe recipe) async {
+  // Print table names upon creation
+  static Future<void> printTables() async {
     final db = await DbManager.db();
-
-    final data = recipe.toMap();
-    final id = await db.insert('Recipe', data,
-        conflictAlgorithm: ConflictAlgorithm.replace);
-    return id;
-  }
-
-  // Get All Recipes
-  static Future<List<Map<String, dynamic>>> getAllRecipes() async {
-    final db = await DbManager.db();
-    return db.query('Recipe', orderBy: "id");
-  }
-
-  // Get Recipe by Id
-  static Future<List<Map<String, dynamic>>> getRecipeById(int id) async {
-    final db = await DbManager.db();
-    return db.query('Recipe', where: "id = ?", whereArgs: [id], limit: 1);
+    var tableNames = (await db
+            .query('sqlite_master', where: 'type = ?', whereArgs: ['table']))
+        .map((row) => row['name'] as String)
+        .toList(growable: false);
+    print(tableNames);
   }
 }

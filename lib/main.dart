@@ -1,21 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:recipe_app/services/functions/db_manager.dart';
 import 'package:recipe_app/services/models/recipe.dart';
 import 'package:recipe_app/widgets/list_card.dart';
 import 'package:recipe_app/widgets/navigation_drawer.dart';
 
 void main() {
   runApp(const MyApp());
-
-  Recipe recipe = Recipe(
-      1, "_name", "_image", 1, "_description", 1, "_prepTime", "_cookTime");
-  // DbManager.createRecipe(recipe);
-  getAllRecipes();
-}
-
-Future<List<Recipe>> getAllRecipes() async {
-  var allRecipes = await DbManager.getAllRecipes();
-  return Recipe.parseRecipeList(allRecipes);
 }
 
 class MyApp extends StatelessWidget {
@@ -43,6 +32,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // TEMPORARY DISPLAY UNTIL I DESIGN A HOMEPAGE UI
+
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
