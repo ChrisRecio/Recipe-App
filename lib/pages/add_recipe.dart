@@ -4,6 +4,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:recipe_app/services/functions/ingredient_provider.dart';
+import 'package:recipe_app/services/functions/recipe_provider.dart';
+import 'package:recipe_app/services/functions/recipe_step_provider.dart';
+import 'package:recipe_app/services/models/ingredient.dart';
+import 'package:recipe_app/services/models/recipe.dart';
+import 'package:recipe_app/services/models/recipe_step.dart';
 
 import '../widgets/navigation_drawer.dart';
 
@@ -22,8 +28,10 @@ class AddRecipeState extends State<AddRecipe> {
   late int _servings;
   late String _description;
   late int _course;
-  late String _prepTime;
-  late String _cookTime;
+  late int _prepTime;
+  late int _cookTime;
+  late String _prepTimeMeasurement;
+  late String _cookTimeMeasurement;
   late List<String> _ingredients;
   late List<String> _steps;
   static const List<String> timeDuration = <String>['Minutes', 'Hours'];
@@ -65,17 +73,13 @@ class AddRecipeState extends State<AddRecipe> {
       children: [
         MaterialButton(
             color: Colors.blue,
-            child: const Text("Pick Image from Gallery",
-                style: TextStyle(
-                    color: Colors.white70, fontWeight: FontWeight.bold)),
+            child: const Text("Pick Image from Gallery", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
             onPressed: () {
               pickImage();
             }),
         MaterialButton(
             color: Colors.blue,
-            child: const Text("Pick Image from Camera",
-                style: TextStyle(
-                    color: Colors.white70, fontWeight: FontWeight.bold)),
+            child: const Text("Pick Image from Camera", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
             onPressed: () {
               pickImageC();
             }),
@@ -174,8 +178,7 @@ class AddRecipeState extends State<AddRecipe> {
           }
           return null;
         },
-        onSaved: (value) =>
-            setState(() => _prepTime = int.parse(value!) as String),
+        onSaved: (value) => setState(() => _prepTime = int.parse(value!)),
       );
 
   Widget _buildCookTimeField() => TextFormField(
@@ -190,11 +193,33 @@ class AddRecipeState extends State<AddRecipe> {
           }
           return null;
         },
-        onSaved: (value) =>
-            setState(() => _cookTime = int.parse(value!) as String),
+        onSaved: (value) => setState(() => _cookTime = int.parse(value!)),
       );
 
-  Widget _buildTimeDropDown() => DropdownButton<String>(
+  Widget _buildPrepTimeDropDown() => DropdownButton<String>(
+        value: timeDuration.first,
+        icon: const Icon(Icons.arrow_downward),
+        elevation: 16,
+        style: const TextStyle(color: Colors.deepPurple),
+        underline: Container(
+          height: 2,
+          color: Colors.deepPurpleAccent,
+        ),
+        onChanged: (String? value) {
+          // This is called when the user selects an item.
+          setState(() {
+            dropdownValue = value!;
+          });
+        },
+        items: timeDuration.map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
+      );
+
+  Widget _buildCookTimeDropDown() => DropdownButton<String>(
         value: timeDuration.first,
         icon: const Icon(Icons.arrow_downward),
         elevation: 16,
@@ -243,30 +268,41 @@ class AddRecipeState extends State<AddRecipe> {
                 const SizedBox(height: 16),
                 _buildDescriptionField(),
                 const SizedBox(height: 16),
-                Row(children: <Widget>[
-                  Flexible(child: _buildPrepTimeField()),
-                  const SizedBox(width: 10),
-                  Flexible(child: _buildTimeDropDown())
-                ]),
+                Row(children: <Widget>[Flexible(child: _buildPrepTimeField()), const SizedBox(width: 10), Flexible(child: _buildPrepTimeDropDown())]),
                 const SizedBox(height: 16),
-                Row(children: <Widget>[
-                  Flexible(child: _buildCookTimeField()),
-                  const SizedBox(width: 10),
-                  Flexible(child: _buildTimeDropDown())
-                ]),
+                Row(children: <Widget>[Flexible(child: _buildCookTimeField()), const SizedBox(width: 10), Flexible(child: _buildCookTimeDropDown())]),
                 MaterialButton(
                     color: Colors.green,
-                    child: const Text("Submit",
-                        style: TextStyle(
-                            color: Colors.white70,
-                            fontWeight: FontWeight.bold)),
-                    onPressed: () {
+                    child: const Text("Submit", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
+                    onPressed: () async {
                       final isValid = formKey.currentState?.validate();
 
                       if (isValid == true) {
                         formKey.currentState?.save();
 
-                        final message = 'Name: $_name';
+                        Recipe recipe = Recipe(0, _name, image.toString(), _servings, _description, _course, _prepTime, _prepTimeMeasurement,
+                            _cookTime, _cookTimeMeasurement);
+                        RecipeStep step;
+                        Ingredient ingredient;
+
+                        // Insert Recipe to DB
+                        int recipeId = await RecipeProvider.createRecipe(recipe);
+
+                        if (recipeId > 0) {
+                          // Insert ingredients
+                          for (int i = 0; i < _ingredients.length; i++) {
+                            ingredient = Ingredient(0, recipeId, _ingredients[i]);
+                            await IngredientProvider.createIngredient(ingredient);
+                          }
+
+                          // Insert steps
+                          for (int i = 0; i < _steps.length; i++) {
+                            step = RecipeStep(0, recipeId, i + 1, _steps[i]);
+                            await RecipeStepProvider.createRecipeStep(step);
+                          }
+                        }
+
+                        final message = '$_name has been saved successfully';
                         final snackBar = SnackBar(
                           content: Text(
                             message,
