@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:recipe_app/pages/view_recipe.dart';
 import 'package:recipe_app/services/functions/recipe_provider.dart';
 
+import '../services/models/recipe.dart';
 import '../widgets/navigation_drawer.dart';
 
 class ViewRecipeList extends StatefulWidget {
@@ -27,11 +29,6 @@ class ViewRecipeListState extends State<ViewRecipeList> {
   @override
   void initState() {
     super.initState();
-
-/*    Recipe recipe = Recipe(1, "_name1", "_image1", 1, "_description1", 1,
-        "_prepTime1", "_cookTime1");
-    RecipeProvider.createRecipe(recipe);*/
-
     _refreshRecipeList();
   }
 
@@ -50,6 +47,13 @@ class ViewRecipeListState extends State<ViewRecipeList> {
                     child: ListTile(
                       title: Text(_recipeList[index]['name']),
                       subtitle: Text(_recipeList[index]['description']),
+                      onTap: () => {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ViewRecipe(recipe: Recipe.fromMap(_recipeList[index])),
+                            ))
+                      },
                     ))));
   }
 }

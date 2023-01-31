@@ -24,18 +24,17 @@ class AddRecipe extends StatefulWidget {
 
 class AddRecipeState extends State<AddRecipe> {
   late String _name;
-  File? image;
+  File? _image;
   late int _servings;
   late String _description;
-  late int _course;
+  late final int _course = 1;
   late int _prepTime;
   late int _cookTime;
-  late String _prepTimeMeasurement;
-  late String _cookTimeMeasurement;
+  static const List<String> timeDuration = <String>['Minutes', 'Hours'];
+  late String _prepTimeMeasurement = timeDuration.first;
+  late String _cookTimeMeasurement = timeDuration.first;
   late List<String> _ingredients;
   late List<String> _steps;
-  static const List<String> timeDuration = <String>['Minutes', 'Hours'];
-  String dropdownValue = timeDuration.first;
 
   final formKey = GlobalKey<FormState>();
   final LineSplitter ls = const LineSplitter();
@@ -48,7 +47,7 @@ class AddRecipeState extends State<AddRecipe> {
 
       final imageTemp = File(image.path);
 
-      setState(() => this.image = imageTemp);
+      setState(() => this._image = imageTemp);
     } on PlatformException catch (e) {
       print('Failed to pick image: $e'); // REMOVE BEFORE PROD
     }
@@ -62,7 +61,7 @@ class AddRecipeState extends State<AddRecipe> {
 
       final imageTemp = File(image.path);
 
-      setState(() => this.image = imageTemp);
+      setState(() => this._image = imageTemp);
     } on PlatformException catch (e) {
       print('Failed to pick image: $e'); // REMOVE BEFORE PROD
     }
@@ -86,7 +85,7 @@ class AddRecipeState extends State<AddRecipe> {
         const SizedBox(
           height: 20,
         ),
-        image != null ? Image.file(image!) : const Text("No image selected")
+        _image != null ? Image.file(_image!) : const Text("No image selected")
       ],
     );
   }
@@ -197,7 +196,7 @@ class AddRecipeState extends State<AddRecipe> {
       );
 
   Widget _buildPrepTimeDropDown() => DropdownButton<String>(
-        value: timeDuration.first,
+        value: _prepTimeMeasurement,
         icon: const Icon(Icons.arrow_downward),
         elevation: 16,
         style: const TextStyle(color: Colors.deepPurple),
@@ -208,7 +207,7 @@ class AddRecipeState extends State<AddRecipe> {
         onChanged: (String? value) {
           // This is called when the user selects an item.
           setState(() {
-            dropdownValue = value!;
+            _prepTimeMeasurement = value!;
           });
         },
         items: timeDuration.map<DropdownMenuItem<String>>((String value) {
@@ -220,7 +219,7 @@ class AddRecipeState extends State<AddRecipe> {
       );
 
   Widget _buildCookTimeDropDown() => DropdownButton<String>(
-        value: timeDuration.first,
+        value: _cookTimeMeasurement,
         icon: const Icon(Icons.arrow_downward),
         elevation: 16,
         style: const TextStyle(color: Colors.deepPurple),
@@ -231,7 +230,7 @@ class AddRecipeState extends State<AddRecipe> {
         onChanged: (String? value) {
           // This is called when the user selects an item.
           setState(() {
-            dropdownValue = value!;
+            _cookTimeMeasurement = value!;
           });
         },
         items: timeDuration.map<DropdownMenuItem<String>>((String value) {
@@ -280,8 +279,16 @@ class AddRecipeState extends State<AddRecipe> {
                       if (isValid == true) {
                         formKey.currentState?.save();
 
-                        Recipe recipe = Recipe(0, _name, image.toString(), _servings, _description, _course, _prepTime, _prepTimeMeasurement,
-                            _cookTime, _cookTimeMeasurement);
+                        Recipe recipe;
+
+                        if (_image == null) {
+                          recipe = Recipe(
+                              0, _name, '', _servings, _description, _course, _prepTime, _prepTimeMeasurement, _cookTime, _cookTimeMeasurement);
+                        } else {
+                          recipe = Recipe(0, _name, _image?.path, _servings, _description, _course, _prepTime, _prepTimeMeasurement, _cookTime,
+                              _cookTimeMeasurement);
+                        }
+
                         RecipeStep step;
                         Ingredient ingredient;
 

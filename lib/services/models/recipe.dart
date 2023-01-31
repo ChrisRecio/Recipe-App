@@ -4,7 +4,7 @@
 class Recipe {
   int _id;
   String _name;
-  String _image;
+  String? _image;
   int _servings;
   String _description;
   int _course;
@@ -17,7 +17,7 @@ class Recipe {
       this._cookTime, this._cookTimeMeasurement);
 
   factory Recipe.fromMap(Map<String, dynamic> data) {
-    return Recipe(data['id'], data['name'], data['image'], data['servings'], data['description'], data['course_id'], data['prepTime'],
+    return Recipe(data['id'], data['name'], data['image'], data['servings'], data['description'], data['courseId'], data['prepTime'],
         data['prepTimeMeasurement'], data['cookTime'], data['cookTimeMeasurement']);
   }
 
@@ -70,8 +70,8 @@ class Recipe {
   int get servings => _servings;
   set servings(int value) => _servings = value;
 
-  String get image => _image;
-  set image(String value) => _image = value;
+  String? get image => _image;
+  set image(String? value) => _image = value;
 
   String get name => _name;
   set name(String value) => _name = value;
