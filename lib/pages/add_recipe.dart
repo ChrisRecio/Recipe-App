@@ -283,9 +283,9 @@ class AddRecipeState extends State<AddRecipe> {
 
                         if (_image == null) {
                           recipe = Recipe(
-                              0, _name, '', _servings, _description, _course, _prepTime, _prepTimeMeasurement, _cookTime, _cookTimeMeasurement);
+                              null, _name, '', _servings, _description, _course, _prepTime, _prepTimeMeasurement, _cookTime, _cookTimeMeasurement);
                         } else {
-                          recipe = Recipe(0, _name, _image?.path, _servings, _description, _course, _prepTime, _prepTimeMeasurement, _cookTime,
+                          recipe = Recipe(null, _name, _image?.path, _servings, _description, _course, _prepTime, _prepTimeMeasurement, _cookTime,
                               _cookTimeMeasurement);
                         }
 

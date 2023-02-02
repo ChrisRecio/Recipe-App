@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:recipe_app/services/models/recipe.dart';
 
-import '../widgets/navigation_drawer.dart';
-
 class ViewRecipe extends StatefulWidget {
   final Recipe recipe;
   const ViewRecipe({super.key, required this.recipe});
@@ -20,7 +18,7 @@ class ViewRecipeState extends State<ViewRecipe> {
     String? image = widget.recipe.image;
 
     return Column(
-      children: [image != null ? Image.file(File(image)) : const Text("No image")],
+      children: [image != '' ? Image.file(File(image!)) : const Text("No image")],
     );
   }
 
@@ -31,8 +29,16 @@ class ViewRecipeState extends State<ViewRecipe> {
         title: Text(widget.recipe.name),
         backgroundColor: Colors.blue.shade700,
       ),
-      drawer: const NavigationDrawer(),
-      body: const Center(child: CircularProgressIndicator()),
+      body: Container(
+        margin: const EdgeInsets.all(24),
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              _buildImageField(),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

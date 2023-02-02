@@ -2,7 +2,7 @@
 // CREATE TABLE IF NOT EXISTS Recipe(id INTEGER NOT NULL PRIMARY KEY autoincrement, name TEXT, image BLOB, servings INTEGER NOT NULL, description TEXT, courseId INTEGER NOT NULL, prepTime TIME, prepTimeMeasurement TEXT, cookTime TIME, cookTimeMeasurement TEXT, FOREIGN KEY(courseId) REFERENCES Course(id));
 
 class Recipe {
-  int _id;
+  int? _id;
   String _name;
   String? _image;
   int _servings;
@@ -30,7 +30,7 @@ class Recipe {
   }
 
   Map<String, dynamic> toMap() {
-    return {
+    var map = {
       'id': _id,
       'name': _name,
       'image': _image,
@@ -42,6 +42,8 @@ class Recipe {
       'cookTime': _cookTime,
       'cookTimeMeasurement': _cookTimeMeasurement
     };
+
+    return map;
   }
 
   @override
@@ -76,6 +78,6 @@ class Recipe {
   String get name => _name;
   set name(String value) => _name = value;
 
-  int get id => _id;
-  set id(int value) => _id = value;
+  int? get id => _id;
+  set id(int? value) => _id = value;
 }

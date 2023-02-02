@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:recipe_app/services/models/recipe.dart';
-import 'package:recipe_app/widgets/list_card.dart';
 import 'package:recipe_app/widgets/navigation_drawer.dart';
 
 void main() {
@@ -40,23 +39,21 @@ class HomePage extends StatelessWidget {
         backgroundColor: Colors.blue.shade700,
       ),
       drawer: const NavigationDrawer(),
-      body: FutureBuilder(builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          recipeList = (snapshot.data as List<Recipe>);
-          return ListView.builder(
-              itemCount: recipeList?.length,
-              itemBuilder: (context, index) {
-                Recipe recipe = recipeList![index];
-                return const ListCard(child: "Recipe");
-              });
-        } else {
-          return ListView.builder(
-              itemCount: 1,
-              itemBuilder: (context, index) {
-                return const ListCard(child: "Recipe");
-              });
-        }
-      }),
+      body: Container(
+          margin: const EdgeInsets.all(24),
+          child: SingleChildScrollView(
+            child: Column(
+              children: const <Widget>[
+                Card(
+                  child: SizedBox(
+                    width: 300,
+                    height: 100,
+                    child: Center(child: Text('Temp')),
+                  ),
+                )
+              ],
+            ),
+          )),
     );
   }
 }
