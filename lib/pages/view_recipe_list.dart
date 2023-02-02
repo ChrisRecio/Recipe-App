@@ -20,6 +20,7 @@ class ViewRecipeListState extends State<ViewRecipeList> {
   bool _isLoading = true;
   void _refreshRecipeList() async {
     final data = await RecipeProvider.getAllRecipes();
+    print(data);
     setState(() {
       _recipeList = data;
       _isLoading = false;

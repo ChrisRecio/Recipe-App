@@ -283,7 +283,7 @@ class AddRecipeState extends State<AddRecipe> {
 
                         if (_image == null) {
                           recipe = Recipe(
-                              null, _name, '', _servings, _description, _course, _prepTime, _prepTimeMeasurement, _cookTime, _cookTimeMeasurement);
+                              null, _name, null, _servings, _description, _course, _prepTime, _prepTimeMeasurement, _cookTime, _cookTimeMeasurement);
                         } else {
                           recipe = Recipe(null, _name, _image?.path, _servings, _description, _course, _prepTime, _prepTimeMeasurement, _cookTime,
                               _cookTimeMeasurement);
@@ -298,13 +298,13 @@ class AddRecipeState extends State<AddRecipe> {
                         if (recipeId > 0) {
                           // Insert ingredients
                           for (int i = 0; i < _ingredients.length; i++) {
-                            ingredient = Ingredient(0, recipeId, _ingredients[i]);
+                            ingredient = Ingredient(null, recipeId, _ingredients[i]);
                             await IngredientProvider.createIngredient(ingredient);
                           }
 
                           // Insert steps
                           for (int i = 0; i < _steps.length; i++) {
-                            step = RecipeStep(0, recipeId, i + 1, _steps[i]);
+                            step = RecipeStep(null, recipeId, i + 1, _steps[i]);
                             await RecipeStepProvider.createRecipeStep(step);
                           }
                         }

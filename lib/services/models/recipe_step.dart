@@ -1,7 +1,7 @@
 // SQL
 // CREATE TABLE IF NOT EXISTS RecipeStep(id INTEGER NOT NULL PRIMARY KEY autoincrement, recipe_id INTEGER NOT NULL, step_number INTEGER NOT NULL, step_description TEXT, FOREIGN KEY(recipe_id) REFERENCES Recipe(id));
 class RecipeStep {
-  int _id;
+  int? _id;
   int _recipeId;
   int _stepNumber;
   String _stepDescription;
@@ -30,6 +30,6 @@ class RecipeStep {
   int get recipeId => _recipeId;
   set recipeId(int value) => _recipeId = value;
 
-  int get id => _id;
-  set id(int value) => _id = value;
+  int? get id => _id;
+  set id(int? value) => _id = value;
 }

@@ -3,7 +3,7 @@ import 'package:recipe_app/services/models/ingredient.dart';
 import 'package:sqflite/sqflite.dart';
 
 // SQL
-// CREATE TABLE IF NOT EXISTS Ingredient(id INTEGER NOT NULL PRIMARY KEY autoincrement, recipe_id INTEGER NOT NULL, ingredient_name TEXT NOT NULL);
+// CREATE TABLE IF NOT EXISTS Ingredient(id INTEGER NOT NULL PRIMARY KEY autoincrement, recipeId INTEGER NOT NULL, ingredient_name TEXT NOT NULL);
 
 class IngredientProvider {
   // Create Recipe
@@ -18,7 +18,7 @@ class IngredientProvider {
   // Get all Ingredients by recipe id
   static Future<List<Map<String, dynamic>>> getAllIngredientByRecipeId(int id) async {
     final db = await DbManager.db();
-    return db.query('Ingredient', where: "recipe_id = ?", whereArgs: [id]);
+    return db.query('Ingredient', where: "recipeId = ?", whereArgs: [id]);
   }
 
   // Get Ingredient by Id

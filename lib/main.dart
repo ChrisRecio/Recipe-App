@@ -45,12 +45,26 @@ class HomePage extends StatelessWidget {
             child: Column(
               children: const <Widget>[
                 Card(
+                  color: Colors.white38,
                   child: SizedBox(
-                    width: 300,
                     height: 100,
                     child: Center(child: Text('Temp')),
                   ),
-                )
+                ),
+                Card(
+                  color: Colors.white38,
+                  child: SizedBox(
+                    height: 100,
+                    child: Center(child: Text('Temp1')),
+                  ),
+                ),
+                Card(
+                  color: Colors.white38,
+                  child: SizedBox(
+                    height: 100,
+                    child: Center(child: Text('Temp2')),
+                  ),
+                ),
               ],
             ),
           )),

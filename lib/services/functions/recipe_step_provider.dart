@@ -18,7 +18,7 @@ class RecipeStepProvider {
   // Get all RecipeSteps by recipe id
   static Future<List<Map<String, dynamic>>> getAllIngredientByRecipeId(int id) async {
     final db = await DbManager.db();
-    return db.query('RecipeStep', where: "recipe_id = ?", whereArgs: [id]);
+    return db.query('RecipeStep', where: "recipeId = ?", whereArgs: [id]);
   }
 
   // Get RecipeStep by Id

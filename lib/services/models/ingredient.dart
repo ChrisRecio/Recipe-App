@@ -2,7 +2,7 @@
 // CREATE TABLE IF NOT EXISTS Ingredient(id INTEGER NOT NULL PRIMARY KEY autoincrement, recipe_id INTEGER NOT NULL, ingredient_name TEXT NOT NULL);
 
 class Ingredient {
-  int _id;
+  int? _id;
   int _recipeId;
   String _ingredientName;
 
@@ -10,6 +10,14 @@ class Ingredient {
 
   factory Ingredient.fromMap(Map<String, dynamic> data) {
     return Ingredient(data['id'], data['recipeId'], data['ingredientName']);
+  }
+
+  static List<Ingredient> parseIngredientList(List<dynamic> list) {
+    final ingredientList = <Ingredient>[];
+    for (final item in list) {
+      ingredientList.add(Ingredient.fromMap(item));
+    }
+    return ingredientList;
   }
 
   Map<String, dynamic> toMap() {
@@ -27,6 +35,6 @@ class Ingredient {
   int get recipeId => _recipeId;
   set recipeId(int value) => _recipeId = value;
 
-  int get id => _id;
-  set id(int value) => _id = value;
+  int? get id => _id;
+  set id(int? value) => _id = value;
 }
