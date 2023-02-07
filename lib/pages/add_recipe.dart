@@ -173,7 +173,7 @@ class AddRecipeState extends State<AddRecipe> {
         keyboardType: TextInputType.number,
         validator: (value) {
           if (value == null || value.isEmpty || int.parse(value) <= 0) {
-            return 'Prep Time must be longer than 0 minutes';
+            return 'Prep Time cannot be negative';
           }
           return null;
         },
@@ -187,8 +187,8 @@ class AddRecipeState extends State<AddRecipe> {
         ),
         keyboardType: TextInputType.number,
         validator: (value) {
-          if (value == null || value.isEmpty || int.parse(value) <= 0) {
-            return 'Cook Time must be longer than 0 minutes';
+          if (value == null || value.isEmpty || int.parse(value) < 0) {
+            return 'Cook Time cannot be negative';
           }
           return null;
         },

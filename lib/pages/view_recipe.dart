@@ -37,9 +37,33 @@ class ViewRecipeState extends State<ViewRecipe> {
   }
 
   Widget _buildImageField() {
-    String? image = widget.recipe.image;
+    String? _image = widget.recipe.image;
     // image?.isEmpty ?? true
-    return Center(child: (image != null) ? Image.file(File(image!)) : const Text("No image"));
+    return Center(child: (_image?.isNotEmpty ?? true) ? Image.file(File(_image!)) : const Text("No image"));
+  }
+
+  Widget _buildServingField() {
+    int servings = widget.recipe.servings;
+    return Column(children: [
+      Text("Servings: $servings"),
+    ]);
+  }
+
+  Widget _buildTimeField() {
+    String prepTimeMeasurement = widget.recipe.prepTimeMeasurement;
+    String cookTimeMeasurement = widget.recipe.cookTimeMeasurement;
+    int prepTime = widget.recipe.prepTime;
+    int cookTime = widget.recipe.cookTime;
+
+    return Row(
+      children: [
+        const Icon(Icons.access_time),
+        Text("Prep time: $prepTime $prepTimeMeasurement"),
+        const SizedBox(width: 10),
+        const Icon(Icons.access_time),
+        Text("Cook time: $cookTime $cookTimeMeasurement"),
+      ],
+    );
   }
 
   Widget _buildIngredientField() {
@@ -50,7 +74,7 @@ class ViewRecipeState extends State<ViewRecipe> {
             ? const Center(child: CircularProgressIndicator())
             : ListView.builder(
                 itemCount: _ingredientList.length,
-                scrollDirection: Axis.vertical,
+                physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemBuilder: (context, index) => Card(
                     color: Colors.orange[200],
@@ -70,13 +94,13 @@ class ViewRecipeState extends State<ViewRecipe> {
             ? const Center(child: CircularProgressIndicator())
             : ListView.builder(
                 itemCount: _stepList.length,
-                scrollDirection: Axis.vertical,
+                physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemBuilder: (context, index) => Card(
                     color: Colors.orange[200],
                     margin: const EdgeInsets.all(15),
                     child: ListTile(
-                      title: Text('${_stepList[index]['stepNumber']} - ${_stepList[index]['stepDescription']}'),
+                      title: Text('${_stepList[index]['stepNumber']}. ${_stepList[index]['stepDescription']}'),
                     ))),
       ],
     );
@@ -91,16 +115,18 @@ class ViewRecipeState extends State<ViewRecipe> {
       ),
       body: Container(
         margin: const EdgeInsets.all(24),
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              _buildImageField(),
-              const SizedBox(height: 16),
-              _buildIngredientField(),
-              const SizedBox(height: 16),
-              _buildStepField()
-            ],
-          ),
+        child: ListView(
+          children: [
+            _buildImageField(),
+            const SizedBox(height: 16),
+            _buildServingField(),
+            const SizedBox(height: 16),
+            _buildTimeField(),
+            const SizedBox(height: 16),
+            _buildIngredientField(),
+            const SizedBox(height: 16),
+            _buildStepField()
+          ],
         ),
       ),
     );
