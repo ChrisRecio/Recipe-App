@@ -20,7 +20,6 @@ class ViewRecipeListState extends State<ViewRecipeList> {
   bool _isLoading = true;
   void _refreshRecipeList() async {
     final data = await RecipeProvider.getAllRecipes();
-    print(data);
     setState(() {
       _recipeList = data;
       _isLoading = false;
@@ -36,7 +35,20 @@ class ViewRecipeListState extends State<ViewRecipeList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Recipe List')),
+        appBar: AppBar(title: const Text('Recipe List'), actions: [
+          IconButton(
+            onPressed: () {
+              // method to show the search bar
+/*              showSearch(
+                  context: context,
+                  // delegate to customize the search bar
+                  delegate: );*/
+
+              print(context);
+            },
+            icon: const Icon(Icons.search),
+          )
+        ]),
         drawer: const NavigationDrawer(),
         body: _isLoading
             ? const Center(child: CircularProgressIndicator())

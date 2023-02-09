@@ -20,7 +20,12 @@ class NavigationDrawer extends StatelessWidget {
         ),
       );
 
-  Widget buildHeader(BuildContext context) => Container();
+  Widget buildHeader(BuildContext context) => const DrawerHeader(
+        decoration: BoxDecoration(
+          color: Colors.blue,
+        ),
+        child: Text('Drawer Header'),
+      );
 
   Widget buildMenuItems(BuildContext context) => Container(
         padding: const EdgeInsets.all(20),
@@ -31,22 +36,17 @@ class NavigationDrawer extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.home_outlined),
               title: const Text('Home'),
-              onTap: () => Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                      builder: (context) => HomePage(title: 'Recipe List'))),
+              onTap: () => Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomePage(title: 'Recipe List'))),
             ),
             ListTile(
               leading: const Icon(Icons.local_pizza_outlined),
               title: const Text('Recipe List'),
-              onTap: () => Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                      builder: (context) => const ViewRecipeList())),
+              onTap: () => Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const ViewRecipeList())),
             ),
             ListTile(
               leading: const Icon(Icons.plus_one_outlined),
               title: const Text('Add New Recipe'),
-              onTap: () => Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => const AddRecipe())),
+              onTap: () => Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const AddRecipe())),
             ),
           ],
         ),

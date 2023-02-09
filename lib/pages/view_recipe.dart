@@ -37,9 +37,55 @@ class ViewRecipeState extends State<ViewRecipe> {
   }
 
   Widget _buildImageField() {
-    String? _image = widget.recipe.image;
-    // image?.isEmpty ?? true
-    return Center(child: (_image?.isNotEmpty ?? true) ? Image.file(File(_image!)) : const Text("No image"));
+    String? image = widget.recipe.image;
+
+    if (image != null) {
+      return SliverAppBar(
+        stretch: true,
+        pinned: true,
+        onStretchTrigger: () {
+          return Future<void>.value();
+        },
+        expandedHeight: 250.0,
+        flexibleSpace: FlexibleSpaceBar(
+          stretchModes: const <StretchMode>[
+            StretchMode.zoomBackground,
+            StretchMode.fadeTitle,
+          ],
+          centerTitle: true,
+          title: Text(widget.recipe.name),
+          background: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              Image.file(
+                File(widget.recipe.image!),
+                fit: BoxFit.cover,
+              ),
+              const DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment(0.0, 0.5),
+                    end: Alignment.center,
+                    colors: <Color>[
+                      Color(0x60000000),
+                      Color(0x00000000),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    } else {
+      return SliverAppBar(
+        pinned: true,
+        flexibleSpace: FlexibleSpaceBar(
+          centerTitle: true,
+          title: Text(widget.recipe.name),
+        ),
+      );
+    }
   }
 
   Widget _buildServingField() {
@@ -56,11 +102,14 @@ class ViewRecipeState extends State<ViewRecipe> {
     int cookTime = widget.recipe.cookTime;
 
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const Icon(Icons.access_time),
+        const SizedBox(width: 5),
         Text("Prep time: $prepTime $prepTimeMeasurement"),
-        const SizedBox(width: 10),
+        const SizedBox(width: 20),
         const Icon(Icons.access_time),
+        const SizedBox(width: 5),
         Text("Cook time: $cookTime $cookTimeMeasurement"),
       ],
     );
@@ -109,26 +158,22 @@ class ViewRecipeState extends State<ViewRecipe> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.recipe.name),
-        backgroundColor: Colors.blue.shade700,
-      ),
-      body: Container(
-        margin: const EdgeInsets.all(24),
-        child: ListView(
-          children: [
-            _buildImageField(),
-            const SizedBox(height: 16),
-            _buildServingField(),
-            const SizedBox(height: 16),
-            _buildTimeField(),
-            const SizedBox(height: 16),
-            _buildIngredientField(),
-            const SizedBox(height: 16),
-            _buildStepField()
-          ],
-        ),
-      ),
-    );
+        body: CustomScrollView(
+      physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+      slivers: [
+        _buildImageField(),
+        SliverList(
+            delegate: SliverChildListDelegate([
+          const SizedBox(height: 16),
+          _buildServingField(),
+          const SizedBox(height: 16),
+          _buildTimeField(),
+          const SizedBox(height: 16),
+          _buildIngredientField(),
+          const SizedBox(height: 16),
+          _buildStepField(),
+        ])),
+      ],
+    ));
   }
 }
