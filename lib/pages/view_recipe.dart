@@ -41,19 +41,22 @@ class ViewRecipeState extends State<ViewRecipe> {
 
     if (image != null) {
       return SliverAppBar(
-        stretch: true,
+        primary: true,
         pinned: true,
-        onStretchTrigger: () {
-          return Future<void>.value();
-        },
-        expandedHeight: 250.0,
+        expandedHeight: MediaQuery.of(context).size.height * 0.35,
+        backgroundColor: Colors.white,
         flexibleSpace: FlexibleSpaceBar(
           stretchModes: const <StretchMode>[
             StretchMode.zoomBackground,
             StretchMode.fadeTitle,
           ],
           centerTitle: true,
-          title: Text(widget.recipe.name),
+          title: Text(
+            widget.recipe.name,
+            style: const TextStyle(fontSize: 30.0),
+            textAlign: TextAlign.center,
+          ),
+          collapseMode: CollapseMode.pin,
           background: Stack(
             fit: StackFit.expand,
             children: <Widget>[
@@ -61,15 +64,18 @@ class ViewRecipeState extends State<ViewRecipe> {
                 File(widget.recipe.image!),
                 fit: BoxFit.cover,
               ),
-              const DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment(0.0, 0.5),
-                    end: Alignment.center,
-                    colors: <Color>[
-                      Color(0x60000000),
-                      Color(0x00000000),
-                    ],
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  height: 20,
+                  width: MediaQuery.of(context).size.width,
+                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 0),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(35),
+                      topRight: Radius.circular(35),
+                    ),
                   ),
                 ),
               ),
@@ -158,22 +164,23 @@ class ViewRecipeState extends State<ViewRecipe> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        extendBodyBehindAppBar: true,
+        backgroundColor: Colors.white,
         body: CustomScrollView(
-      physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-      slivers: [
-        _buildImageField(),
-        SliverList(
-            delegate: SliverChildListDelegate([
-          const SizedBox(height: 16),
-          _buildServingField(),
-          const SizedBox(height: 16),
-          _buildTimeField(),
-          const SizedBox(height: 16),
-          _buildIngredientField(),
-          const SizedBox(height: 16),
-          _buildStepField(),
-        ])),
-      ],
-    ));
+          slivers: [
+            _buildImageField(),
+            SliverList(
+                delegate: SliverChildListDelegate([
+              const SizedBox(height: 16),
+              _buildServingField(),
+              const SizedBox(height: 16),
+              _buildTimeField(),
+              const SizedBox(height: 16),
+              _buildIngredientField(),
+              const SizedBox(height: 16),
+              _buildStepField(),
+            ])),
+          ],
+        ));
   }
 }
