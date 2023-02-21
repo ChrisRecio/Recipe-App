@@ -11,7 +11,7 @@ import 'package:recipe_app/services/models/ingredient.dart';
 import 'package:recipe_app/services/models/recipe.dart';
 import 'package:recipe_app/services/models/recipe_step.dart';
 
-import '../widgets/navigation_drawer.dart';
+import '../widgets/nav_drawer.dart';
 
 class AddRecipe extends StatefulWidget {
   const AddRecipe({super.key});
@@ -245,7 +245,7 @@ class AddRecipeState extends State<AddRecipe> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Add Recipe')),
-      drawer: const NavigationDrawer(),
+      drawer: const NavDrawer(),
       body: Container(
         margin: const EdgeInsets.all(24),
         child: Form(

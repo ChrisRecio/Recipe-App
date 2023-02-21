@@ -1,9 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:recipe_app/pages/view_recipe.dart';
 import 'package:recipe_app/services/functions/recipe_provider.dart';
 
 import '../services/models/recipe.dart';
-import '../widgets/navigation_drawer.dart';
+import '../widgets/nav_drawer.dart';
 
 class ViewRecipeList extends StatefulWidget {
   const ViewRecipeList({super.key});
@@ -49,10 +51,11 @@ class ViewRecipeListState extends State<ViewRecipeList> {
           icon: const Icon(Icons.search),
         )
       ]),
-      drawer: const NavigationDrawer(),
+      drawer: const NavDrawer(),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : GridView.builder(
+              padding: const EdgeInsets.all(10),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 crossAxisSpacing: 10.0,
@@ -60,9 +63,36 @@ class ViewRecipeListState extends State<ViewRecipeList> {
               ),
               itemCount: _recipeList.length,
               itemBuilder: (BuildContext ctx, index) {
-                return ListTile(
-                  title: Text(_recipeList[index]['name']),
-                  subtitle: Text(_recipeList[index]['description']),
+                return InkWell(
+                  child: Container(
+                    decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
+                    padding: const EdgeInsets.all(5.0),
+                    child: Center(
+                        child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        ClipRRect(
+                          borderRadius: const BorderRadius.all(Radius.circular(10)),
+                          child: _recipeList[index]['image'] != null
+                              ? Image.file(
+                                  File(_recipeList[index]['image']),
+                                  fit: BoxFit.cover,
+                                  height: 140,
+                                )
+                              : Image.asset(
+                                  'assets/images/logo.jpg',
+                                  fit: BoxFit.cover,
+                                  height: 140,
+                                ),
+                        ),
+                        Text(
+                          _recipeList[index]['name'],
+                          style: const TextStyle(fontSize: 20.0),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    )),
+                  ),
                   onTap: () => {
                     Navigator.push(
                         context,
@@ -72,47 +102,6 @@ class ViewRecipeListState extends State<ViewRecipeList> {
                   },
                 );
               }),
-
-      /*ListView.builder(
-                itemCount: _recipeList.length,
-                itemBuilder: (context, index) => Card(
-                    color: Colors.orange[200],
-                    margin: const EdgeInsets.all(15),
-                    child: Slidable(
-                      key: const ValueKey(0),
-                      endActionPane: ActionPane(
-                        motion: const ScrollMotion(),
-                        children: [
-                          SlidableAction(
-                            onPressed: (context) => {},
-                            backgroundColor: const Color(0xFFFE4A49),
-                            foregroundColor: Colors.white,
-                            icon: Icons.delete,
-                            label: 'Delete',
-                          ),
-                          SlidableAction(
-                            onPressed: (context) => {},
-                            backgroundColor: const Color(0xFF21B7CA),
-                            foregroundColor: Colors.white,
-                            icon: Icons.share,
-                            label: 'Share',
-                          ),
-                        ],
-                      ),
-                      child: ListTile(
-                        title: Text(_recipeList[index]['name']),
-                        subtitle: Text(_recipeList[index]['description']),
-                        onTap: () => {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ViewRecipe(recipe: Recipe.fromMap(_recipeList[index])),
-                              ))
-                        },
-                      ),
-                    )
-                )
-        )*/
     );
   }
 }

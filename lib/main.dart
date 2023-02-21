@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:recipe_app/services/models/recipe.dart';
-import 'package:recipe_app/widgets/navigation_drawer.dart';
+import 'package:recipe_app/widgets/nav_drawer.dart';
 
 void main() {
   runApp(const MyApp());
@@ -38,7 +38,7 @@ class HomePage extends StatelessWidget {
         title: Text(title),
         backgroundColor: Colors.blue.shade700,
       ),
-      drawer: const NavigationDrawer(),
+      drawer: const NavDrawer(),
       body: Container(
           margin: const EdgeInsets.all(24),
           child: SingleChildScrollView(
