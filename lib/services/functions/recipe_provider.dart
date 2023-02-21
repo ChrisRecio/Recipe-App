@@ -21,6 +21,12 @@ class RecipeProvider {
     return db.query('Recipe', orderBy: "id");
   }
 
+  // Get All Recipe Names
+  static Future<List<Map<String, Object?>>> getAllRecipeNames() async {
+    final db = await DbManager.db();
+    return db.rawQuery("SELECT name FROM Recipe");
+  }
+
   // Get Recipe by Id
   static Future<List<Map<String, dynamic>>> getRecipeById(int id) async {
     final db = await DbManager.db();

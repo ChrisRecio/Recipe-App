@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:recipe_app/pages/view_recipe.dart';
 import 'package:recipe_app/services/functions/recipe_provider.dart';
 
+import '../services/functions/recipe_list_search_delegate.dart';
 import '../services/models/recipe.dart';
 import '../widgets/nav_drawer.dart';
 
@@ -18,10 +19,12 @@ class ViewRecipeList extends StatefulWidget {
 
 class ViewRecipeListState extends State<ViewRecipeList> {
   List<Map<String, dynamic>> _recipeList = [];
+  List<Map<String, dynamic>> _searchTerms = [];
 
   bool _isLoading = true;
   void _refreshRecipeList() async {
     final data = await RecipeProvider.getAllRecipes();
+    _searchTerms = await RecipeProvider.getAllRecipeNames();
     setState(() {
       _recipeList = data;
       _isLoading = false;
@@ -40,13 +43,11 @@ class ViewRecipeListState extends State<ViewRecipeList> {
       appBar: AppBar(title: const Text('Recipe List'), actions: [
         IconButton(
           onPressed: () {
-            // method to show the search bar
-/*              showSearch(
-                  context: context,
-                  // delegate to customize the search bar
-                  delegate: );*/
-
-            print("Search Button");
+            // print(_searchTerms);
+            showSearch(
+                context: context,
+                // delegate to customize the search bar
+                delegate: RecipeListSearchDelegate());
           },
           icon: const Icon(Icons.search),
         )
