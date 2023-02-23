@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:recipe_app/services/models/recipe.dart';
-import 'package:recipe_app/widgets/list_card.dart';
-import 'package:recipe_app/widgets/navigation_drawer.dart';
+import 'package:recipe_app/widgets/nav_drawer.dart';
 
 void main() {
   runApp(const MyApp());
@@ -39,24 +38,36 @@ class HomePage extends StatelessWidget {
         title: Text(title),
         backgroundColor: Colors.blue.shade700,
       ),
-      drawer: const NavigationDrawer(),
-      body: FutureBuilder(builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          recipeList = (snapshot.data as List<Recipe>);
-          return ListView.builder(
-              itemCount: recipeList?.length,
-              itemBuilder: (context, index) {
-                Recipe recipe = recipeList![index];
-                return const ListCard(child: "Recipe");
-              });
-        } else {
-          return ListView.builder(
-              itemCount: 1,
-              itemBuilder: (context, index) {
-                return const ListCard(child: "Recipe");
-              });
-        }
-      }),
+      drawer: const NavDrawer(),
+      body: Container(
+          margin: const EdgeInsets.all(24),
+          child: SingleChildScrollView(
+            child: Column(
+              children: const <Widget>[
+                Card(
+                  color: Colors.white38,
+                  child: SizedBox(
+                    height: 100,
+                    child: Center(child: Text('Temp')),
+                  ),
+                ),
+                Card(
+                  color: Colors.white38,
+                  child: SizedBox(
+                    height: 100,
+                    child: Center(child: Text('Temp1')),
+                  ),
+                ),
+                Card(
+                  color: Colors.white38,
+                  child: SizedBox(
+                    height: 100,
+                    child: Center(child: Text('Temp2')),
+                  ),
+                ),
+              ],
+            ),
+          )),
     );
   }
 }

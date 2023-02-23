@@ -1,27 +1,40 @@
 // SQL
-// CREATE TABLE IF NOT EXISTS Ingredient(id INTEGER NOT NULL PRIMARY KEY autoincrement, ingredient_name TEXT NOT NULL, quantity TEXT NOT NULL);
+// CREATE TABLE IF NOT EXISTS Ingredient(id INTEGER NOT NULL PRIMARY KEY autoincrement, recipe_id INTEGER NOT NULL, ingredient_name TEXT NOT NULL);
 
 class Ingredient {
-  int _id;
+  int? _id;
+  int _recipeId;
   String _ingredientName;
-  String _quantity;
 
-  Ingredient(this._id, this._ingredientName, this._quantity);
+  Ingredient(this._id, this._recipeId, this._ingredientName);
 
   factory Ingredient.fromMap(Map<String, dynamic> data) {
-    return Ingredient(data['id'], data['ingredientName'], data['quantity']);
+    return Ingredient(data['id'], data['recipeId'], data['ingredientName']);
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': _id,
-      'ingredientName': _ingredientName,
-      'quantity': _quantity,
-    };
+  static List<Ingredient> parseIngredientList(List<dynamic> list) {
+    final ingredientList = <Ingredient>[];
+    for (final item in list) {
+      ingredientList.add(Ingredient.fromMap(item));
+    }
+    return ingredientList;
+  }
+
+  Map<String, dynamic> toMap() {
+    return {'id': _id, 'recipeId': _recipeId, 'ingredientName': _ingredientName};
   }
 
   @override
   String toString() {
-    return 'recipe{id: $_id, ingredientName: $_ingredientName, quantity: $_quantity}';
+    return 'recipe{id: $_id, recipeId: $_recipeId, ingredientName: $_ingredientName}';
   }
+
+  String get ingredientName => _ingredientName;
+  set ingredientName(String value) => _ingredientName = value;
+
+  int get recipeId => _recipeId;
+  set recipeId(int value) => _recipeId = value;
+
+  int? get id => _id;
+  set id(int? value) => _id = value;
 }

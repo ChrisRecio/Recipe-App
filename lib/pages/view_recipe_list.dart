@@ -1,7 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:recipe_app/pages/view_recipe.dart';
 import 'package:recipe_app/services/functions/recipe_provider.dart';
 
-import '../widgets/navigation_drawer.dart';
+import '../services/functions/recipe_list_search_delegate.dart';
+import '../services/models/recipe.dart';
+import '../widgets/nav_drawer.dart';
 
 class ViewRecipeList extends StatefulWidget {
   const ViewRecipeList({super.key});
@@ -14,10 +19,12 @@ class ViewRecipeList extends StatefulWidget {
 
 class ViewRecipeListState extends State<ViewRecipeList> {
   List<Map<String, dynamic>> _recipeList = [];
+  List<Map<String, dynamic>> _searchTerms = [];
 
   bool _isLoading = true;
   void _refreshRecipeList() async {
     final data = await RecipeProvider.getAllRecipes();
+    _searchTerms = await RecipeProvider.getAllRecipeNames();
     setState(() {
       _recipeList = data;
       _isLoading = false;
@@ -27,29 +34,75 @@ class ViewRecipeListState extends State<ViewRecipeList> {
   @override
   void initState() {
     super.initState();
-
-/*    Recipe recipe = Recipe(1, "_name1", "_image1", 1, "_description1", 1,
-        "_prepTime1", "_cookTime1");
-    RecipeProvider.createRecipe(recipe);*/
-
     _refreshRecipeList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Recipe List')),
-        drawer: const NavigationDrawer(),
-        body: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : ListView.builder(
-                itemCount: _recipeList.length,
-                itemBuilder: (context, index) => Card(
-                    color: Colors.orange[200],
-                    margin: const EdgeInsets.all(15),
-                    child: ListTile(
-                      title: Text(_recipeList[index]['name']),
-                      subtitle: Text(_recipeList[index]['description']),
-                    ))));
+      appBar: AppBar(title: const Text('Recipe List'), actions: [
+        IconButton(
+          onPressed: () {
+            // print(_searchTerms);
+            showSearch(
+                context: context,
+                // delegate to customize the search bar
+                delegate: RecipeListSearchDelegate());
+          },
+          icon: const Icon(Icons.search),
+        )
+      ]),
+      drawer: const NavDrawer(),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : GridView.builder(
+              padding: const EdgeInsets.all(10),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 10.0,
+                mainAxisSpacing: 10.0,
+              ),
+              itemCount: _recipeList.length,
+              itemBuilder: (BuildContext ctx, index) {
+                return InkWell(
+                  child: Container(
+                    decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
+                    padding: const EdgeInsets.all(5.0),
+                    child: Center(
+                        child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        ClipRRect(
+                          borderRadius: const BorderRadius.all(Radius.circular(10)),
+                          child: _recipeList[index]['image'] != null
+                              ? Image.file(
+                                  File(_recipeList[index]['image']),
+                                  fit: BoxFit.cover,
+                                  height: 140,
+                                )
+                              : Image.asset(
+                                  'assets/images/logo.jpg',
+                                  fit: BoxFit.cover,
+                                  height: 140,
+                                ),
+                        ),
+                        Text(
+                          _recipeList[index]['name'],
+                          style: const TextStyle(fontSize: 20.0),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    )),
+                  ),
+                  onTap: () => {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ViewRecipe(recipe: Recipe.fromMap(_recipeList[index])),
+                        ))
+                  },
+                );
+              }),
+    );
   }
 }

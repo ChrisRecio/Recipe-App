@@ -30,9 +30,10 @@ dependencies:
   flutter:
     sdk: flutter
   cached_network_image: ^3.2.0
-  image_picker:
-  sqflite:
-  path:
+  flutter_slidable: ^2.0.0
+  image_picker: ^0.8.6
+  sqflite: ^2.2.4
+  path: ^1.8.2
 
 
   # The following adds the Cupertino Icons font to your application.

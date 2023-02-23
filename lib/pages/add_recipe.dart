@@ -4,8 +4,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:recipe_app/services/functions/ingredient_provider.dart';
+import 'package:recipe_app/services/functions/recipe_provider.dart';
+import 'package:recipe_app/services/functions/recipe_step_provider.dart';
+import 'package:recipe_app/services/models/ingredient.dart';
+import 'package:recipe_app/services/models/recipe.dart';
+import 'package:recipe_app/services/models/recipe_step.dart';
 
-import '../widgets/navigation_drawer.dart';
+import '../widgets/nav_drawer.dart';
 
 class AddRecipe extends StatefulWidget {
   const AddRecipe({super.key});
@@ -18,16 +24,17 @@ class AddRecipe extends StatefulWidget {
 
 class AddRecipeState extends State<AddRecipe> {
   late String _name;
-  File? image;
+  File? _image;
   late int _servings;
   late String _description;
-  late int _course;
-  late String _prepTime;
-  late String _cookTime;
+  late final int _course = 1;
+  late int _prepTime;
+  late int _cookTime;
+  static const List<String> timeDuration = <String>['Minutes', 'Hours'];
+  late String _prepTimeMeasurement = timeDuration.first;
+  late String _cookTimeMeasurement = timeDuration.first;
   late List<String> _ingredients;
   late List<String> _steps;
-  static const List<String> timeDuration = <String>['Minutes', 'Hours'];
-  String dropdownValue = timeDuration.first;
 
   final formKey = GlobalKey<FormState>();
   final LineSplitter ls = const LineSplitter();
@@ -40,7 +47,7 @@ class AddRecipeState extends State<AddRecipe> {
 
       final imageTemp = File(image.path);
 
-      setState(() => this.image = imageTemp);
+      setState(() => this._image = imageTemp);
     } on PlatformException catch (e) {
       print('Failed to pick image: $e'); // REMOVE BEFORE PROD
     }
@@ -54,7 +61,7 @@ class AddRecipeState extends State<AddRecipe> {
 
       final imageTemp = File(image.path);
 
-      setState(() => this.image = imageTemp);
+      setState(() => this._image = imageTemp);
     } on PlatformException catch (e) {
       print('Failed to pick image: $e'); // REMOVE BEFORE PROD
     }
@@ -65,24 +72,20 @@ class AddRecipeState extends State<AddRecipe> {
       children: [
         MaterialButton(
             color: Colors.blue,
-            child: const Text("Pick Image from Gallery",
-                style: TextStyle(
-                    color: Colors.white70, fontWeight: FontWeight.bold)),
+            child: const Text("Pick Image from Gallery", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
             onPressed: () {
               pickImage();
             }),
         MaterialButton(
             color: Colors.blue,
-            child: const Text("Pick Image from Camera",
-                style: TextStyle(
-                    color: Colors.white70, fontWeight: FontWeight.bold)),
+            child: const Text("Pick Image from Camera", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
             onPressed: () {
               pickImageC();
             }),
         const SizedBox(
           height: 20,
         ),
-        image != null ? Image.file(image!) : const Text("No image selected")
+        _image != null ? Image.file(_image!) : const Text("No image selected")
       ],
     );
   }
@@ -170,12 +173,11 @@ class AddRecipeState extends State<AddRecipe> {
         keyboardType: TextInputType.number,
         validator: (value) {
           if (value == null || value.isEmpty || int.parse(value) <= 0) {
-            return 'Prep Time must be longer than 0 minutes';
+            return 'Prep Time cannot be negative';
           }
           return null;
         },
-        onSaved: (value) =>
-            setState(() => _prepTime = int.parse(value!) as String),
+        onSaved: (value) => setState(() => _prepTime = int.parse(value!)),
       );
 
   Widget _buildCookTimeField() => TextFormField(
@@ -185,17 +187,16 @@ class AddRecipeState extends State<AddRecipe> {
         ),
         keyboardType: TextInputType.number,
         validator: (value) {
-          if (value == null || value.isEmpty || int.parse(value) <= 0) {
-            return 'Cook Time must be longer than 0 minutes';
+          if (value == null || value.isEmpty || int.parse(value) < 0) {
+            return 'Cook Time cannot be negative';
           }
           return null;
         },
-        onSaved: (value) =>
-            setState(() => _cookTime = int.parse(value!) as String),
+        onSaved: (value) => setState(() => _cookTime = int.parse(value!)),
       );
 
-  Widget _buildTimeDropDown() => DropdownButton<String>(
-        value: timeDuration.first,
+  Widget _buildPrepTimeDropDown() => DropdownButton<String>(
+        value: _prepTimeMeasurement,
         icon: const Icon(Icons.arrow_downward),
         elevation: 16,
         style: const TextStyle(color: Colors.deepPurple),
@@ -206,7 +207,30 @@ class AddRecipeState extends State<AddRecipe> {
         onChanged: (String? value) {
           // This is called when the user selects an item.
           setState(() {
-            dropdownValue = value!;
+            _prepTimeMeasurement = value!;
+          });
+        },
+        items: timeDuration.map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
+      );
+
+  Widget _buildCookTimeDropDown() => DropdownButton<String>(
+        value: _cookTimeMeasurement,
+        icon: const Icon(Icons.arrow_downward),
+        elevation: 16,
+        style: const TextStyle(color: Colors.deepPurple),
+        underline: Container(
+          height: 2,
+          color: Colors.deepPurpleAccent,
+        ),
+        onChanged: (String? value) {
+          // This is called when the user selects an item.
+          setState(() {
+            _cookTimeMeasurement = value!;
           });
         },
         items: timeDuration.map<DropdownMenuItem<String>>((String value) {
@@ -221,7 +245,7 @@ class AddRecipeState extends State<AddRecipe> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Add Recipe')),
-      drawer: const NavigationDrawer(),
+      drawer: const NavDrawer(),
       body: Container(
         margin: const EdgeInsets.all(24),
         child: Form(
@@ -243,30 +267,49 @@ class AddRecipeState extends State<AddRecipe> {
                 const SizedBox(height: 16),
                 _buildDescriptionField(),
                 const SizedBox(height: 16),
-                Row(children: <Widget>[
-                  Flexible(child: _buildPrepTimeField()),
-                  const SizedBox(width: 10),
-                  Flexible(child: _buildTimeDropDown())
-                ]),
+                Row(children: <Widget>[Flexible(child: _buildPrepTimeField()), const SizedBox(width: 10), Flexible(child: _buildPrepTimeDropDown())]),
                 const SizedBox(height: 16),
-                Row(children: <Widget>[
-                  Flexible(child: _buildCookTimeField()),
-                  const SizedBox(width: 10),
-                  Flexible(child: _buildTimeDropDown())
-                ]),
+                Row(children: <Widget>[Flexible(child: _buildCookTimeField()), const SizedBox(width: 10), Flexible(child: _buildCookTimeDropDown())]),
                 MaterialButton(
                     color: Colors.green,
-                    child: const Text("Submit",
-                        style: TextStyle(
-                            color: Colors.white70,
-                            fontWeight: FontWeight.bold)),
-                    onPressed: () {
+                    child: const Text("Submit", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
+                    onPressed: () async {
                       final isValid = formKey.currentState?.validate();
 
                       if (isValid == true) {
                         formKey.currentState?.save();
 
-                        final message = 'Name: $_name';
+                        Recipe recipe;
+
+                        if (_image == null) {
+                          recipe = Recipe(
+                              null, _name, null, _servings, _description, _course, _prepTime, _prepTimeMeasurement, _cookTime, _cookTimeMeasurement);
+                        } else {
+                          recipe = Recipe(null, _name, _image?.path, _servings, _description, _course, _prepTime, _prepTimeMeasurement, _cookTime,
+                              _cookTimeMeasurement);
+                        }
+
+                        RecipeStep step;
+                        Ingredient ingredient;
+
+                        // Insert Recipe to DB
+                        int recipeId = await RecipeProvider.createRecipe(recipe);
+
+                        if (recipeId > 0) {
+                          // Insert ingredients
+                          for (int i = 0; i < _ingredients.length; i++) {
+                            ingredient = Ingredient(null, recipeId, _ingredients[i]);
+                            await IngredientProvider.createIngredient(ingredient);
+                          }
+
+                          // Insert steps
+                          for (int i = 0; i < _steps.length; i++) {
+                            step = RecipeStep(null, recipeId, i + 1, _steps[i]);
+                            await RecipeStepProvider.createRecipeStep(step);
+                          }
+                        }
+
+                        final message = '$_name has been saved successfully';
                         final snackBar = SnackBar(
                           content: Text(
                             message,
