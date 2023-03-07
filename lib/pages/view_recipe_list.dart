@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:recipe_app/pages/view_recipe.dart';
 import 'package:recipe_app/services/functions/recipe_provider.dart';
 
+import '../assets/constants.dart';
 import '../services/functions/recipe_list_search_delegate.dart';
 import '../services/models/recipe.dart';
 import '../widgets/nav_drawer.dart';
@@ -40,7 +41,7 @@ class ViewRecipeListState extends State<ViewRecipeList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Recipe List'), actions: [
+      appBar: AppBar(title: const Text('Recipe List'), backgroundColor: Constants.lightRedColor, centerTitle: true, actions: [
         IconButton(
           onPressed: () {
             // print(_searchTerms);

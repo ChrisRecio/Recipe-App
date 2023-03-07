@@ -11,6 +11,7 @@ import 'package:recipe_app/services/models/ingredient.dart';
 import 'package:recipe_app/services/models/recipe.dart';
 import 'package:recipe_app/services/models/recipe_step.dart';
 
+import '../assets/constants.dart';
 import '../widgets/nav_drawer.dart';
 
 class AddRecipe extends StatefulWidget {
@@ -23,8 +24,8 @@ class AddRecipe extends StatefulWidget {
 }
 
 class AddRecipeState extends State<AddRecipe> {
-  late String _name;
   File? _image;
+  late String _name;
   late int _servings;
   late String _description;
   late final int _course = 1;
@@ -47,13 +48,13 @@ class AddRecipeState extends State<AddRecipe> {
 
       final imageTemp = File(image.path);
 
-      setState(() => this._image = imageTemp);
+      setState(() => _image = imageTemp);
     } on PlatformException catch (e) {
       print('Failed to pick image: $e'); // REMOVE BEFORE PROD
     }
   }
 
-  Future pickImageC() async {
+  Future pickImageCamera() async {
     try {
       final image = await ImagePicker().pickImage(source: ImageSource.camera);
 
@@ -61,7 +62,7 @@ class AddRecipeState extends State<AddRecipe> {
 
       final imageTemp = File(image.path);
 
-      setState(() => this._image = imageTemp);
+      setState(() => _image = imageTemp);
     } on PlatformException catch (e) {
       print('Failed to pick image: $e'); // REMOVE BEFORE PROD
     }
@@ -70,6 +71,8 @@ class AddRecipeState extends State<AddRecipe> {
   Widget _buildImageField() {
     return Column(
       children: [
+        _image != null ? Image.file(_image!) : const Text("No image selected"),
+        const SizedBox(height: 5),
         MaterialButton(
             color: Colors.blue,
             child: const Text("Pick Image from Gallery", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
@@ -80,12 +83,11 @@ class AddRecipeState extends State<AddRecipe> {
             color: Colors.blue,
             child: const Text("Pick Image from Camera", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
             onPressed: () {
-              pickImageC();
+              pickImageCamera();
             }),
         const SizedBox(
           height: 20,
         ),
-        _image != null ? Image.file(_image!) : const Text("No image selected")
       ],
     );
   }
@@ -244,7 +246,11 @@ class AddRecipeState extends State<AddRecipe> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Recipe')),
+      appBar: AppBar(
+        title: const Text('Add Recipe'),
+        backgroundColor: Constants.lightRedColor,
+        centerTitle: true,
+      ),
       drawer: const NavDrawer(),
       body: Container(
         margin: const EdgeInsets.all(24),

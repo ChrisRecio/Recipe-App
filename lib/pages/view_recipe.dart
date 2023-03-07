@@ -5,6 +5,15 @@ import 'package:recipe_app/services/functions/ingredient_provider.dart';
 import 'package:recipe_app/services/functions/recipe_step_provider.dart';
 import 'package:recipe_app/services/models/recipe.dart';
 
+import '../assets/constants.dart';
+import 'edit_recipe.dart';
+
+enum MenuItem {
+  share,
+  edit,
+  delete,
+}
+
 class ViewRecipe extends StatefulWidget {
   final Recipe recipe;
   const ViewRecipe({super.key, required this.recipe});
@@ -36,6 +45,43 @@ class ViewRecipeState extends State<ViewRecipe> {
     _refreshLists();
   }
 
+  Widget _popupMenu() {
+    return PopupMenuButton<MenuItem>(
+        onSelected: (value) {
+          if (value == MenuItem.share) {
+          } else if (value == MenuItem.edit) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditRecipe(recipe: widget.recipe),
+                ));
+          } else if (value == MenuItem.delete) {}
+        },
+        itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: MenuItem.share,
+                child: ListTile(
+                  leading: Icon(Icons.share),
+                  title: Text('Share'),
+                ),
+              ),
+              const PopupMenuItem(
+                value: MenuItem.edit,
+                child: ListTile(
+                  leading: Icon(Icons.edit),
+                  title: Text('Edit'),
+                ),
+              ),
+              const PopupMenuItem(
+                value: MenuItem.delete,
+                child: ListTile(
+                  leading: Icon(Icons.delete),
+                  title: Text('Delete'),
+                ),
+              ),
+            ]);
+  }
+
   Widget _buildImageField() {
     String? image = widget.recipe.image;
 
@@ -44,7 +90,10 @@ class ViewRecipeState extends State<ViewRecipe> {
         primary: true,
         pinned: true,
         expandedHeight: MediaQuery.of(context).size.height * 0.35,
-        backgroundColor: Colors.white,
+        backgroundColor: Constants.lightRedColor,
+        actions: [
+          _popupMenu(),
+        ],
         flexibleSpace: FlexibleSpaceBar(
           stretchModes: const <StretchMode>[
             StretchMode.zoomBackground,
@@ -86,6 +135,10 @@ class ViewRecipeState extends State<ViewRecipe> {
     } else {
       return SliverAppBar(
         pinned: true,
+        backgroundColor: Constants.lightRedColor,
+        actions: [
+          _popupMenu(),
+        ],
         flexibleSpace: FlexibleSpaceBar(
           centerTitle: true,
           title: Text(widget.recipe.name),
