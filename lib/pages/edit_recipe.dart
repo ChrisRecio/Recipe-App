@@ -21,6 +21,8 @@ class EditRecipeState extends State<EditRecipe> {
   // Variables
   final formKey = GlobalKey<FormState>();
   File? _image;
+  late String _name;
+  late int _servings;
 
   @override
   void initState() {
@@ -31,6 +33,8 @@ class EditRecipeState extends State<EditRecipe> {
   void setData() {
     if (widget.recipe.image != null) {
       _image = File(widget.recipe.image!);
+      _name = widget.recipe.name;
+      _servings = widget.recipe.servings;
     }
   }
 
@@ -89,6 +93,37 @@ class EditRecipeState extends State<EditRecipe> {
     );
   }
 
+  Widget _buildNameField() => TextFormField(
+        initialValue: _name,
+        decoration: const InputDecoration(
+          labelText: 'Name',
+          border: OutlineInputBorder(),
+        ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter the name of the recipe';
+          }
+          return null;
+        },
+        onSaved: (value) => setState(() => _name = value!),
+      );
+
+  Widget _buildServingsField() => TextFormField(
+        initialValue: _servings.toString(),
+        decoration: const InputDecoration(
+          labelText: 'Servings',
+          border: OutlineInputBorder(),
+        ),
+        keyboardType: TextInputType.number,
+        validator: (value) {
+          if (value == null || value.isEmpty || int.parse(value) <= 0) {
+            return 'Servings must be greater or equal to 1';
+          }
+          return null;
+        },
+        onSaved: (value) => setState(() => _servings = int.parse(value!)),
+      );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,6 +138,10 @@ class EditRecipeState extends State<EditRecipe> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 _buildImageField(),
+                const SizedBox(height: 16),
+                _buildNameField(),
+                const SizedBox(height: 16),
+                _buildServingsField(),
                 const SizedBox(height: 16),
               ],
             ),

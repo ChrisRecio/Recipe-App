@@ -82,7 +82,7 @@ class ViewRecipeState extends State<ViewRecipe> {
             ]);
   }
 
-  Widget _buildImageField() {
+  Widget _buildAppBar() {
     String? image = widget.recipe.image;
 
     if (image != null) {
@@ -90,7 +90,7 @@ class ViewRecipeState extends State<ViewRecipe> {
         primary: true,
         pinned: true,
         expandedHeight: MediaQuery.of(context).size.height * 0.35,
-        backgroundColor: Constants.lightRedColor,
+        backgroundColor: Colors.white,
         actions: [
           _popupMenu(),
         ],
@@ -221,7 +221,7 @@ class ViewRecipeState extends State<ViewRecipe> {
         backgroundColor: Colors.white,
         body: CustomScrollView(
           slivers: [
-            _buildImageField(),
+            _buildAppBar(),
             SliverList(
                 delegate: SliverChildListDelegate([
               const SizedBox(height: 16),
