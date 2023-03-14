@@ -32,10 +32,10 @@ class EditRecipeState extends State<EditRecipe> {
   File? _image;
   late String _name;
   late int _servings;
-  late final ingredientData; // From DB
+  late final _ingredientData; // From DB
   late String _ingredients; // Names
   List<String> _ingredientList = []; // Save function
-  late final stepsData; // From DB
+  late final _stepsData; // From DB
   late String _steps; // Names
   List<String> _stepList = []; // Save function
   late String _description;
@@ -67,25 +67,26 @@ class EditRecipeState extends State<EditRecipe> {
     _prepTimeMeasurement = widget.recipe.prepTimeMeasurement;
     _cookTime = widget.recipe.cookTime;
     _cookTimeMeasurement = widget.recipe.cookTimeMeasurement;
-    ingredientData = await IngredientProvider.getAllIngredientByRecipeId(_id);
-    stepsData = await RecipeStepProvider.getAllRecipeStepsByRecipeId(_id);
+    _ingredientData = await IngredientProvider.getAllIngredientByRecipeId(_id);
+    _stepsData = await RecipeStepProvider.getAllRecipeStepsByRecipeId(_id);
+    print(_stepsData);
 
     setState(() {
       _ingredients = "";
-      for (int i = 0; i < ingredientData.length; i++) {
-        if (i == ingredientData.length - 1) {
-          _ingredients += ingredientData[i]["ingredientName"];
+      for (int i = 0; i < _ingredientData.length; i++) {
+        if (i == _ingredientData.length - 1) {
+          _ingredients += _ingredientData[i]["ingredientName"];
         } else {
-          _ingredients += ingredientData[i]["ingredientName"] + "\n";
+          _ingredients += _ingredientData[i]["ingredientName"] + "\n";
         }
       }
 
       _steps = "";
-      for (int i = 0; i < stepsData.length; i++) {
-        if (i == stepsData.length - 1) {
-          _steps += "${stepsData[i]["stepDescription"]}";
+      for (int i = 0; i < _stepsData.length; i++) {
+        if (i == _stepsData.length - 1) {
+          _steps += "${_stepsData[i]["stepDescription"]}";
         } else {
-          _steps += "${stepsData[i]["stepDescription"]}\n";
+          _steps += "${_stepsData[i]["stepDescription"]}\n";
         }
       }
       _isLoading = false;
@@ -374,21 +375,30 @@ class EditRecipeState extends State<EditRecipe> {
                         // id INTEGER NOT NULL PRIMARY KEY autoincrement, recipeId INTEGER NOT NULL, stepNumber INTEGER NOT NULL, stepDescription TEXT, FOREIGN KEY(recipeId) REFERENCES Recipe(id))
 
                         //ingredientData = Data from DB
+                        //[{id: 1, recipeId: 1, ingredientName: Bread}, {id: 2, recipeId: 1, ingredientName: Cheese}, {id: 3, recipeId: 1, ingredientName: Ham}]
                         //_ingredientList = Data from TextFormField
 
                         //stepsData = Data from DB
+                        //[{id: 1, recipeId: 1, stepNumber: 1, stepDescription: Take 2 pieces of bread}, {id: 2, recipeId: 1, stepNumber: 2, stepDescription: Place cheese and ham on top of 1 slice of bread}, {id: 3, recipeId: 1, stepNumber: 3, stepDescription: Place 2nd slice of bread over ham and cheese}]
                         //_stepList = Data from TextFormField
 
                         // Compare db to textFormField entries and send to 1 of 3 cases below
-                        if (_ingredientList.length == _ingredients.length) {
+                        if (_ingredientList.length == _ingredientData.length) {
                           //same # of ingredients/steps => update each entry
-                        } else if (_ingredientList.length > _ingredients.length) {
+                          for (int i = 0; i < _ingredientList.length; i++) {
+                            ingredient = Ingredient(_ingredientData[i]['id'], _ingredientData[i]['recipeId'], _ingredientList[i]);
+                            await IngredientProvider.updateIngredient(ingredient);
+                          }
+                        } else if (_ingredientList.length > _ingredientData.length) {
                           // larger # of ingredients/steps => update each entry + create new entry
-                        } else if (_ingredientList.length < _ingredients.length) {
+                        } else if (_ingredientList.length < _ingredientData.length) {
                           // if lower # of ingredients/steps => update each entry + delete extras
+                        } else {
+                          print("if you're here then you win\nnot sure what to tell you");
                         }
 
                         // Insert ingredients
+/*
                         for (int i = 0; i < _ingredientList.length; i++) {
                           ingredient = Ingredient(null, _id, _ingredients[i]);
                           await IngredientProvider.createIngredient(ingredient);
@@ -399,6 +409,7 @@ class EditRecipeState extends State<EditRecipe> {
                           step = RecipeStep(null, _id, i + 1, _steps[i]);
                           await RecipeStepProvider.createRecipeStep(step);
                         }
+*/
 
                         final message = '$_name has been updated';
                         final snackBar = SnackBar(
