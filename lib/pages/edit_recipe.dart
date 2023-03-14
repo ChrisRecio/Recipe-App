@@ -1,11 +1,18 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:recipe_app/pages/view_recipe_list.dart';
 
 import '../assets/constants.dart';
+import '../services/functions/ingredient_provider.dart';
+import '../services/functions/recipe_provider.dart';
+import '../services/functions/recipe_step_provider.dart';
+import '../services/models/ingredient.dart';
 import '../services/models/recipe.dart';
+import '../services/models/recipe_step.dart';
 
 class EditRecipe extends StatefulWidget {
   final Recipe recipe;
@@ -20,9 +27,27 @@ class EditRecipe extends StatefulWidget {
 class EditRecipeState extends State<EditRecipe> {
   // Variables
   final formKey = GlobalKey<FormState>();
+
+  late int _id;
   File? _image;
   late String _name;
   late int _servings;
+  late final ingredientData; // From DB
+  late String _ingredients; // Names
+  List<String> _ingredientList = []; // Save function
+  late final stepsData; // From DB
+  late String _steps; // Names
+  List<String> _stepList = []; // Save function
+  late String _description;
+  late int _prepTime;
+  late int _cookTime;
+  static const List<String> timeDuration = <String>['Minutes', 'Hours'];
+  late String _prepTimeMeasurement = timeDuration.first;
+  late String _cookTimeMeasurement = timeDuration.first;
+
+  final LineSplitter ls = const LineSplitter();
+
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -30,12 +55,41 @@ class EditRecipeState extends State<EditRecipe> {
     setData();
   }
 
-  void setData() {
+  void setData() async {
     if (widget.recipe.image != null) {
       _image = File(widget.recipe.image!);
-      _name = widget.recipe.name;
-      _servings = widget.recipe.servings;
     }
+    _id = widget.recipe.id!;
+    _name = widget.recipe.name;
+    _servings = widget.recipe.servings;
+    _description = widget.recipe.description;
+    _prepTime = widget.recipe.prepTime;
+    _prepTimeMeasurement = widget.recipe.prepTimeMeasurement;
+    _cookTime = widget.recipe.cookTime;
+    _cookTimeMeasurement = widget.recipe.cookTimeMeasurement;
+    ingredientData = await IngredientProvider.getAllIngredientByRecipeId(_id);
+    stepsData = await RecipeStepProvider.getAllRecipeStepsByRecipeId(_id);
+
+    setState(() {
+      _ingredients = "";
+      for (int i = 0; i < ingredientData.length; i++) {
+        if (i == ingredientData.length - 1) {
+          _ingredients += ingredientData[i]["ingredientName"];
+        } else {
+          _ingredients += ingredientData[i]["ingredientName"] + "\n";
+        }
+      }
+
+      _steps = "";
+      for (int i = 0; i < stepsData.length; i++) {
+        if (i == stepsData.length - 1) {
+          _steps += "${stepsData[i]["stepDescription"]}";
+        } else {
+          _steps += "${stepsData[i]["stepDescription"]}\n";
+        }
+      }
+      _isLoading = false;
+    });
   }
 
   // Pick image from gallery
@@ -124,10 +178,148 @@ class EditRecipeState extends State<EditRecipe> {
         onSaved: (value) => setState(() => _servings = int.parse(value!)),
       );
 
+  Widget _buildIngredientsField() => _isLoading
+      ? const Center(child: CircularProgressIndicator())
+      : TextFormField(
+          initialValue: _ingredients,
+          decoration: const InputDecoration(
+            labelText: 'Ingredients',
+            border: OutlineInputBorder(),
+          ),
+          keyboardType: TextInputType.multiline,
+          maxLines: null,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter at least 1 ingredient';
+            }
+            return null;
+          },
+          onSaved: (value) => setState(() {
+            _ingredientList = ls.convert(value!);
+          }),
+        );
+
+  Widget _buildStepsField() => _isLoading
+      ? const Center(child: CircularProgressIndicator())
+      : TextFormField(
+          initialValue: _steps,
+          decoration: const InputDecoration(
+            labelText: 'Steps',
+            border: OutlineInputBorder(),
+          ),
+          keyboardType: TextInputType.multiline,
+          maxLines: null,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter at least 1 step';
+            }
+            return null;
+          },
+          onSaved: (value) => setState(() {
+            _stepList = ls.convert(value!);
+          }),
+        );
+
+  Widget _buildDescriptionField() => TextFormField(
+        initialValue: _description,
+        decoration: const InputDecoration(
+          labelText: 'Description',
+          border: OutlineInputBorder(),
+        ),
+        keyboardType: TextInputType.multiline,
+        maxLines: null,
+        onSaved: (value) => setState(() => _description = value!),
+      );
+
+  Widget _buildPrepTimeField() => TextFormField(
+        initialValue: _prepTime.toString(),
+        decoration: const InputDecoration(
+          labelText: 'Prep Time',
+          border: OutlineInputBorder(),
+        ),
+        keyboardType: TextInputType.number,
+        validator: (value) {
+          if (value == null || value.isEmpty || int.parse(value) <= 0) {
+            return 'Prep Time cannot be negative';
+          }
+          return null;
+        },
+        onSaved: (value) => setState(() => _prepTime = int.parse(value!)),
+      );
+
+  Widget _buildCookTimeField() => TextFormField(
+        initialValue: _cookTime.toString(),
+        decoration: const InputDecoration(
+          labelText: 'Cook Time',
+          border: OutlineInputBorder(),
+        ),
+        keyboardType: TextInputType.number,
+        validator: (value) {
+          if (value == null || value.isEmpty || int.parse(value) < 0) {
+            return 'Cook Time cannot be negative';
+          }
+          return null;
+        },
+        onSaved: (value) => setState(() => _cookTime = int.parse(value!)),
+      );
+
+  Widget _buildPrepTimeDropDown() => DropdownButton<String>(
+        value: _prepTimeMeasurement,
+        icon: const Icon(Icons.arrow_downward),
+        elevation: 16,
+        style: const TextStyle(color: Colors.deepPurple),
+        underline: Container(
+          height: 2,
+          color: Colors.deepPurpleAccent,
+        ),
+        onChanged: (String? value) {
+          // This is called when the user selects an item.
+          setState(() {
+            _prepTimeMeasurement = value!;
+          });
+        },
+        items: timeDuration.map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
+      );
+
+  Widget _buildCookTimeDropDown() => DropdownButton<String>(
+        value: _cookTimeMeasurement,
+        icon: const Icon(Icons.arrow_downward),
+        elevation: 16,
+        style: const TextStyle(color: Colors.deepPurple),
+        underline: Container(
+          height: 2,
+          color: Colors.deepPurpleAccent,
+        ),
+        onChanged: (String? value) {
+          // This is called when the user selects an item.
+          setState(() {
+            _cookTimeMeasurement = value!;
+          });
+        },
+        items: timeDuration.map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
+      );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Edit ${widget.recipe.name}'), centerTitle: true, backgroundColor: Constants.lightRedColor),
+      appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ViewRecipeList())).whenComplete(initState),
+          ),
+          title: Text('Edit $_name'),
+          centerTitle: true,
+          backgroundColor: Constants.lightRedColor),
       body: Container(
         alignment: Alignment.center,
         margin: const EdgeInsets.all(24),
@@ -143,6 +335,83 @@ class EditRecipeState extends State<EditRecipe> {
                 const SizedBox(height: 16),
                 _buildServingsField(),
                 const SizedBox(height: 16),
+                _buildIngredientsField(),
+                const SizedBox(height: 16),
+                _buildStepsField(),
+                const SizedBox(height: 16),
+                _buildDescriptionField(),
+                const SizedBox(height: 16),
+                Row(children: <Widget>[Flexible(child: _buildPrepTimeField()), const SizedBox(width: 10), Flexible(child: _buildPrepTimeDropDown())]),
+                const SizedBox(height: 16),
+                Row(children: <Widget>[Flexible(child: _buildCookTimeField()), const SizedBox(width: 10), Flexible(child: _buildCookTimeDropDown())]),
+                const SizedBox(height: 16),
+                MaterialButton(
+                    color: Colors.green,
+                    child: const Text("Submit", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
+                    onPressed: () async {
+                      final isValid = formKey.currentState?.validate();
+
+                      if (isValid == true) {
+                        formKey.currentState?.save();
+
+                        Recipe recipe;
+
+                        if (_image == null) {
+                          recipe =
+                              Recipe(_id, _name, null, _servings, _description, 1, _prepTime, _prepTimeMeasurement, _cookTime, _cookTimeMeasurement);
+                        } else {
+                          recipe = Recipe(
+                              _id, _name, _image?.path, _servings, _description, 1, _prepTime, _prepTimeMeasurement, _cookTime, _cookTimeMeasurement);
+                        }
+
+                        // Update Recipe
+                        await RecipeProvider.updateRecipe(recipe);
+
+                        RecipeStep step;
+                        Ingredient ingredient;
+
+                        // id INTEGER NOT NULL PRIMARY KEY autoincrement, recipeId INTEGER NOT NULL, ingredientName TEXT NOT NULL, FOREIGN KEY(recipeId) REFERENCES Recipe(id))
+                        // id INTEGER NOT NULL PRIMARY KEY autoincrement, recipeId INTEGER NOT NULL, stepNumber INTEGER NOT NULL, stepDescription TEXT, FOREIGN KEY(recipeId) REFERENCES Recipe(id))
+
+                        //ingredientData = Data from DB
+                        //_ingredientList = Data from TextFormField
+
+                        //stepsData = Data from DB
+                        //_stepList = Data from TextFormField
+
+                        // Compare db to textFormField entries and send to 1 of 3 cases below
+                        if (_ingredientList.length == _ingredients.length) {
+                          //same # of ingredients/steps => update each entry
+                        } else if (_ingredientList.length > _ingredients.length) {
+                          // larger # of ingredients/steps => update each entry + create new entry
+                        } else if (_ingredientList.length < _ingredients.length) {
+                          // if lower # of ingredients/steps => update each entry + delete extras
+                        }
+
+                        // Insert ingredients
+                        for (int i = 0; i < _ingredientList.length; i++) {
+                          ingredient = Ingredient(null, _id, _ingredients[i]);
+                          await IngredientProvider.createIngredient(ingredient);
+                        }
+
+                        // Insert steps
+                        for (int i = 0; i < _stepList.length; i++) {
+                          step = RecipeStep(null, _id, i + 1, _steps[i]);
+                          await RecipeStepProvider.createRecipeStep(step);
+                        }
+
+                        final message = '$_name has been updated';
+                        final snackBar = SnackBar(
+                          content: Text(
+                            message,
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                          backgroundColor: Colors.orange,
+                        );
+
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      }
+                    }),
               ],
             ),
           ),

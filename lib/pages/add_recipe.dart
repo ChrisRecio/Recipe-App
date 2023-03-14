@@ -276,6 +276,7 @@ class AddRecipeState extends State<AddRecipe> {
                 Row(children: <Widget>[Flexible(child: _buildPrepTimeField()), const SizedBox(width: 10), Flexible(child: _buildPrepTimeDropDown())]),
                 const SizedBox(height: 16),
                 Row(children: <Widget>[Flexible(child: _buildCookTimeField()), const SizedBox(width: 10), Flexible(child: _buildCookTimeDropDown())]),
+                const SizedBox(height: 16),
                 MaterialButton(
                     color: Colors.green,
                     child: const Text("Submit", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
@@ -295,11 +296,11 @@ class AddRecipeState extends State<AddRecipe> {
                               _cookTimeMeasurement);
                         }
 
-                        RecipeStep step;
-                        Ingredient ingredient;
-
                         // Insert Recipe to DB
                         int recipeId = await RecipeProvider.createRecipe(recipe);
+
+                        RecipeStep step;
+                        Ingredient ingredient;
 
                         if (recipeId > 0) {
                           // Insert ingredients

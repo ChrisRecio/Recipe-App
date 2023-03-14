@@ -38,4 +38,13 @@ class RecipeProvider {
     final db = await DbManager.db();
     return db.query('Recipe', where: "name LIKE ?", whereArgs: ['%$name%']);
   }
+
+  // Update Recipe
+  static Future<int> updateRecipe(Recipe recipe) async {
+    final db = await DbManager.db();
+    final data = recipe.toMap();
+
+    final id = await db.update('Recipe', data, where: "id = ?", whereArgs: [recipe.id]);
+    return id;
+  }
 }

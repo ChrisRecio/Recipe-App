@@ -26,4 +26,13 @@ class IngredientProvider {
     final db = await DbManager.db();
     return db.query('Ingredient', where: "id = ?", whereArgs: [id], limit: 1);
   }
+
+  // Update Ingredient
+  static Future<int> updateIngredient(Ingredient ingredient) async {
+    final db = await DbManager.db();
+    final data = ingredient.toMap();
+
+    final id = await db.update('Ingredient', data, where: "id = ?", whereArgs: [ingredient.id]);
+    return id;
+  }
 }
