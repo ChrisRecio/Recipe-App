@@ -14,6 +14,6 @@
 
 ## Getting Started
 
-To get started with {Placeholder App Name}, just download the app and start saving and organizing your recipes.
+To begin using {Placeholder App Name}, simply download the app and begin organizing and saving your recipes.
 
 Happy cooking!
