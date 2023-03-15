@@ -2,7 +2,7 @@
 
 ## Overview
 
-{Placeholder App Name} is a mobile app made with Flutter that helps you save and organize your favorite recipes. With {Placeholder App Name}, you can store all your recipes in one place, and even get recipe suggestions.
+{Placeholder App Name} is a mobile app made using Flutter that helps you save and organize your favorite recipes. With {Placeholder App Name}, you can store all your recipes in one place, and even get recipe suggestions.
 
 ## Features
 
