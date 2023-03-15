@@ -11,6 +11,7 @@ import 'package:recipe_app/services/models/ingredient.dart';
 import 'package:recipe_app/services/models/recipe.dart';
 import 'package:recipe_app/services/models/recipe_step.dart';
 
+import '../assets/constants.dart';
 import '../widgets/nav_drawer.dart';
 
 class AddRecipe extends StatefulWidget {
@@ -23,8 +24,8 @@ class AddRecipe extends StatefulWidget {
 }
 
 class AddRecipeState extends State<AddRecipe> {
-  late String _name;
   File? _image;
+  late String _name;
   late int _servings;
   late String _description;
   late final int _course = 1;
@@ -47,13 +48,13 @@ class AddRecipeState extends State<AddRecipe> {
 
       final imageTemp = File(image.path);
 
-      setState(() => this._image = imageTemp);
+      setState(() => _image = imageTemp);
     } on PlatformException catch (e) {
       print('Failed to pick image: $e'); // REMOVE BEFORE PROD
     }
   }
 
-  Future pickImageC() async {
+  Future pickImageCamera() async {
     try {
       final image = await ImagePicker().pickImage(source: ImageSource.camera);
 
@@ -61,7 +62,7 @@ class AddRecipeState extends State<AddRecipe> {
 
       final imageTemp = File(image.path);
 
-      setState(() => this._image = imageTemp);
+      setState(() => _image = imageTemp);
     } on PlatformException catch (e) {
       print('Failed to pick image: $e'); // REMOVE BEFORE PROD
     }
@@ -70,6 +71,8 @@ class AddRecipeState extends State<AddRecipe> {
   Widget _buildImageField() {
     return Column(
       children: [
+        _image != null ? Image.file(_image!) : const Text("No image selected"),
+        const SizedBox(height: 5),
         MaterialButton(
             color: Colors.blue,
             child: const Text("Pick Image from Gallery", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
@@ -80,21 +83,18 @@ class AddRecipeState extends State<AddRecipe> {
             color: Colors.blue,
             child: const Text("Pick Image from Camera", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
             onPressed: () {
-              pickImageC();
+              pickImageCamera();
             }),
         const SizedBox(
           height: 20,
         ),
-        _image != null ? Image.file(_image!) : const Text("No image selected")
       ],
     );
   }
 
   Widget _buildNameField() => TextFormField(
-        decoration: const InputDecoration(
-          labelText: 'Name',
-          border: OutlineInputBorder(),
-        ),
+        cursorColor: Constants.darkBeige,
+        decoration: Constants.textFormFieldDecoration('Name'),
         validator: (value) {
           if (value == null || value.isEmpty) {
             return 'Please enter the name of the recipe';
@@ -105,10 +105,8 @@ class AddRecipeState extends State<AddRecipe> {
       );
 
   Widget _buildServingsField() => TextFormField(
-        decoration: const InputDecoration(
-          labelText: 'Servings',
-          border: OutlineInputBorder(),
-        ),
+        cursorColor: Constants.darkBeige,
+        decoration: Constants.textFormFieldDecoration('Servings'),
         keyboardType: TextInputType.number,
         validator: (value) {
           if (value == null || value.isEmpty || int.parse(value) <= 0) {
@@ -120,10 +118,8 @@ class AddRecipeState extends State<AddRecipe> {
       );
 
   Widget _buildIngredientsField() => TextFormField(
-        decoration: const InputDecoration(
-          labelText: 'Ingredients',
-          border: OutlineInputBorder(),
-        ),
+        cursorColor: Constants.darkBeige,
+        decoration: Constants.textFormFieldDecoration('Ingredients'),
         keyboardType: TextInputType.multiline,
         maxLines: null,
         validator: (value) {
@@ -138,10 +134,8 @@ class AddRecipeState extends State<AddRecipe> {
       );
 
   Widget _buildStepsField() => TextFormField(
-        decoration: const InputDecoration(
-          labelText: 'Steps',
-          border: OutlineInputBorder(),
-        ),
+        cursorColor: Constants.darkBeige,
+        decoration: Constants.textFormFieldDecoration('Steps'),
         keyboardType: TextInputType.multiline,
         maxLines: null,
         validator: (value) {
@@ -156,20 +150,15 @@ class AddRecipeState extends State<AddRecipe> {
       );
 
   Widget _buildDescriptionField() => TextFormField(
-        decoration: const InputDecoration(
-          labelText: 'Description',
-          border: OutlineInputBorder(),
-        ),
+        cursorColor: Constants.darkBeige,
+        decoration: Constants.textFormFieldDecoration('Description'),
         keyboardType: TextInputType.multiline,
         maxLines: null,
         onSaved: (value) => setState(() => _description = value!),
       );
-
   Widget _buildPrepTimeField() => TextFormField(
-        decoration: const InputDecoration(
-          labelText: 'Prep Time',
-          border: OutlineInputBorder(),
-        ),
+        cursorColor: Constants.darkBeige,
+        decoration: Constants.textFormFieldDecorationWithIcon('Prep Time', const Icon(Icons.access_time)),
         keyboardType: TextInputType.number,
         validator: (value) {
           if (value == null || value.isEmpty || int.parse(value) <= 0) {
@@ -181,10 +170,8 @@ class AddRecipeState extends State<AddRecipe> {
       );
 
   Widget _buildCookTimeField() => TextFormField(
-        decoration: const InputDecoration(
-          labelText: 'Cook Time',
-          border: OutlineInputBorder(),
-        ),
+        cursorColor: Constants.darkBeige,
+        decoration: Constants.textFormFieldDecorationWithIcon('Cook Time', const Icon(Icons.access_time)),
         keyboardType: TextInputType.number,
         validator: (value) {
           if (value == null || value.isEmpty || int.parse(value) < 0) {
@@ -199,10 +186,10 @@ class AddRecipeState extends State<AddRecipe> {
         value: _prepTimeMeasurement,
         icon: const Icon(Icons.arrow_downward),
         elevation: 16,
-        style: const TextStyle(color: Colors.deepPurple),
+        style: TextStyle(color: Constants.blue),
         underline: Container(
           height: 2,
-          color: Colors.deepPurpleAccent,
+          color: Constants.blue,
         ),
         onChanged: (String? value) {
           // This is called when the user selects an item.
@@ -222,10 +209,10 @@ class AddRecipeState extends State<AddRecipe> {
         value: _cookTimeMeasurement,
         icon: const Icon(Icons.arrow_downward),
         elevation: 16,
-        style: const TextStyle(color: Colors.deepPurple),
+        style: TextStyle(color: Constants.blue),
         underline: Container(
           height: 2,
-          color: Colors.deepPurpleAccent,
+          color: Constants.blue,
         ),
         onChanged: (String? value) {
           // This is called when the user selects an item.
@@ -244,7 +231,12 @@ class AddRecipeState extends State<AddRecipe> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Recipe')),
+      backgroundColor: Constants.beige,
+      appBar: AppBar(
+        title: const Text('Add Recipe'),
+        backgroundColor: Constants.primaryRed,
+        centerTitle: true,
+      ),
       drawer: const NavDrawer(),
       body: Container(
         margin: const EdgeInsets.all(24),
@@ -270,8 +262,9 @@ class AddRecipeState extends State<AddRecipe> {
                 Row(children: <Widget>[Flexible(child: _buildPrepTimeField()), const SizedBox(width: 10), Flexible(child: _buildPrepTimeDropDown())]),
                 const SizedBox(height: 16),
                 Row(children: <Widget>[Flexible(child: _buildCookTimeField()), const SizedBox(width: 10), Flexible(child: _buildCookTimeDropDown())]),
+                const SizedBox(height: 16),
                 MaterialButton(
-                    color: Colors.green,
+                    color: Constants.green,
                     child: const Text("Submit", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
                     onPressed: () async {
                       final isValid = formKey.currentState?.validate();
@@ -289,11 +282,11 @@ class AddRecipeState extends State<AddRecipe> {
                               _cookTimeMeasurement);
                         }
 
-                        RecipeStep step;
-                        Ingredient ingredient;
-
                         // Insert Recipe to DB
                         int recipeId = await RecipeProvider.createRecipe(recipe);
+
+                        RecipeStep step;
+                        Ingredient ingredient;
 
                         if (recipeId > 0) {
                           // Insert ingredients

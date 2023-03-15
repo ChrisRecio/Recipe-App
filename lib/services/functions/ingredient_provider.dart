@@ -3,7 +3,7 @@ import 'package:recipe_app/services/models/ingredient.dart';
 import 'package:sqflite/sqflite.dart';
 
 // SQL
-// CREATE TABLE IF NOT EXISTS Ingredient(id INTEGER NOT NULL PRIMARY KEY autoincrement, recipeId INTEGER NOT NULL, ingredient_name TEXT NOT NULL);
+// CREATE TABLE IF NOT EXISTS Ingredient(id INTEGER NOT NULL PRIMARY KEY autoincrement, recipeId INTEGER NOT NULL, ingredientName TEXT NOT NULL);
 
 class IngredientProvider {
   // Create Recipe
@@ -25,5 +25,20 @@ class IngredientProvider {
   static Future<List<Map<String, dynamic>>> getIngredientById(int id) async {
     final db = await DbManager.db();
     return db.query('Ingredient', where: "id = ?", whereArgs: [id], limit: 1);
+  }
+
+  // Update Ingredient
+  static Future<int> updateIngredient(Ingredient ingredient) async {
+    final db = await DbManager.db();
+    final data = ingredient.toMap();
+
+    final id = await db.update('Ingredient', data, where: "id = ?", whereArgs: [ingredient.id]);
+    return id;
+  }
+
+  // Delete Ingredient
+  static Future<void> deleteIngredient(int id) async {
+    final db = await DbManager.db();
+    await db.delete('Ingredient', where: "id = ?", whereArgs: [id]);
   }
 }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:recipe_app/services/models/recipe.dart';
 import 'package:recipe_app/widgets/nav_drawer.dart';
 
+import '../assets/constants.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -32,11 +34,12 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TEMPORARY DISPLAY UNTIL I DESIGN A HOMEPAGE UI
-
     return Scaffold(
+      backgroundColor: Constants.beige,
       appBar: AppBar(
-        title: Text(title),
-        backgroundColor: Colors.blue.shade700,
+        title: Text(title, style: const TextStyle(color: Colors.white)),
+        centerTitle: true,
+        backgroundColor: Constants.primaryRed,
       ),
       drawer: const NavDrawer(),
       body: Container(

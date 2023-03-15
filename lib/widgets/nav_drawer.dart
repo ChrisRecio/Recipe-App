@@ -3,6 +3,7 @@ import 'package:recipe_app/main.dart';
 import 'package:recipe_app/pages/add_recipe.dart';
 import 'package:recipe_app/pages/view_recipe_list.dart';
 
+import '../assets/constants.dart';
 import '../pages/settings.dart';
 
 class NavDrawer extends StatelessWidget {
@@ -10,6 +11,7 @@ class NavDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Drawer(
+        backgroundColor: Constants.beige,
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -21,28 +23,34 @@ class NavDrawer extends StatelessWidget {
         ),
       );
 
-  Widget buildHeader(BuildContext context) => DrawerHeader(
-      decoration: const BoxDecoration(color: Colors.redAccent),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(
-            child: SizedBox(
-              height: 110,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(80.0),
-                child: Image.asset('assets/images/logo.jpg'),
-              ),
-            ),
-          ),
-          const Center(
-            child: Text(
-              "PLACEHOLDER APP NAME",
-              style: TextStyle(color: Colors.black, fontSize: 20),
-            ),
-          ),
-        ],
-      ));
+  Widget buildHeader(BuildContext context) => SizedBox(
+        height: MediaQuery.of(context).size.height / 3,
+        child: DrawerHeader(
+            decoration: BoxDecoration(color: Constants.primaryRed),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height / 5,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(80.0),
+                      child: Image.asset('assets/images/logo.jpg'),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                const Center(
+                  child: Text(
+                    "PLACEHOLDER APP NAME",
+                    style: TextStyle(color: Colors.black, fontSize: 20),
+                  ),
+                ),
+              ],
+            )),
+      );
 
   Widget buildMenuItems(BuildContext context) => Container(
         padding: const EdgeInsets.all(20),
