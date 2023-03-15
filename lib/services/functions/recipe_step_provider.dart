@@ -28,10 +28,16 @@ class RecipeStepProvider {
   }
 
   // Update RecipeStep
-  static void updateRecipeStep(RecipeStep recipeStep) async {
+  static Future<void> updateRecipeStep(RecipeStep recipeStep) async {
     final db = await DbManager.db();
     final data = recipeStep.toMap();
 
     await db.update('RecipeStep', data, where: "id = ?", whereArgs: [recipeStep.id]);
+  }
+
+  // Delete RecipeStep
+  static Future<void> deleteRecipeStep(int id) async {
+    final db = await DbManager.db();
+    await db.delete('RecipeStep', where: "id = ?", whereArgs: [id]);
   }
 }

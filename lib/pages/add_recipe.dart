@@ -93,10 +93,8 @@ class AddRecipeState extends State<AddRecipe> {
   }
 
   Widget _buildNameField() => TextFormField(
-        decoration: const InputDecoration(
-          labelText: 'Name',
-          border: OutlineInputBorder(),
-        ),
+        cursorColor: Constants.darkBeige,
+        decoration: Constants.textFormFieldDecoration('Name'),
         validator: (value) {
           if (value == null || value.isEmpty) {
             return 'Please enter the name of the recipe';
@@ -107,10 +105,8 @@ class AddRecipeState extends State<AddRecipe> {
       );
 
   Widget _buildServingsField() => TextFormField(
-        decoration: const InputDecoration(
-          labelText: 'Servings',
-          border: OutlineInputBorder(),
-        ),
+        cursorColor: Constants.darkBeige,
+        decoration: Constants.textFormFieldDecoration('Servings'),
         keyboardType: TextInputType.number,
         validator: (value) {
           if (value == null || value.isEmpty || int.parse(value) <= 0) {
@@ -122,10 +118,8 @@ class AddRecipeState extends State<AddRecipe> {
       );
 
   Widget _buildIngredientsField() => TextFormField(
-        decoration: const InputDecoration(
-          labelText: 'Ingredients',
-          border: OutlineInputBorder(),
-        ),
+        cursorColor: Constants.darkBeige,
+        decoration: Constants.textFormFieldDecoration('Ingredients'),
         keyboardType: TextInputType.multiline,
         maxLines: null,
         validator: (value) {
@@ -140,10 +134,8 @@ class AddRecipeState extends State<AddRecipe> {
       );
 
   Widget _buildStepsField() => TextFormField(
-        decoration: const InputDecoration(
-          labelText: 'Steps',
-          border: OutlineInputBorder(),
-        ),
+        cursorColor: Constants.darkBeige,
+        decoration: Constants.textFormFieldDecoration('Steps'),
         keyboardType: TextInputType.multiline,
         maxLines: null,
         validator: (value) {
@@ -158,20 +150,15 @@ class AddRecipeState extends State<AddRecipe> {
       );
 
   Widget _buildDescriptionField() => TextFormField(
-        decoration: const InputDecoration(
-          labelText: 'Description',
-          border: OutlineInputBorder(),
-        ),
+        cursorColor: Constants.darkBeige,
+        decoration: Constants.textFormFieldDecoration('Description'),
         keyboardType: TextInputType.multiline,
         maxLines: null,
         onSaved: (value) => setState(() => _description = value!),
       );
-
   Widget _buildPrepTimeField() => TextFormField(
-        decoration: const InputDecoration(
-          labelText: 'Prep Time',
-          border: OutlineInputBorder(),
-        ),
+        cursorColor: Constants.darkBeige,
+        decoration: Constants.textFormFieldDecorationWithIcon('Prep Time', const Icon(Icons.access_time)),
         keyboardType: TextInputType.number,
         validator: (value) {
           if (value == null || value.isEmpty || int.parse(value) <= 0) {
@@ -183,10 +170,8 @@ class AddRecipeState extends State<AddRecipe> {
       );
 
   Widget _buildCookTimeField() => TextFormField(
-        decoration: const InputDecoration(
-          labelText: 'Cook Time',
-          border: OutlineInputBorder(),
-        ),
+        cursorColor: Constants.darkBeige,
+        decoration: Constants.textFormFieldDecorationWithIcon('Cook Time', const Icon(Icons.access_time)),
         keyboardType: TextInputType.number,
         validator: (value) {
           if (value == null || value.isEmpty || int.parse(value) < 0) {
@@ -201,10 +186,10 @@ class AddRecipeState extends State<AddRecipe> {
         value: _prepTimeMeasurement,
         icon: const Icon(Icons.arrow_downward),
         elevation: 16,
-        style: const TextStyle(color: Colors.deepPurple),
+        style: TextStyle(color: Constants.blue),
         underline: Container(
           height: 2,
-          color: Colors.deepPurpleAccent,
+          color: Constants.blue,
         ),
         onChanged: (String? value) {
           // This is called when the user selects an item.
@@ -224,10 +209,10 @@ class AddRecipeState extends State<AddRecipe> {
         value: _cookTimeMeasurement,
         icon: const Icon(Icons.arrow_downward),
         elevation: 16,
-        style: const TextStyle(color: Colors.deepPurple),
+        style: TextStyle(color: Constants.blue),
         underline: Container(
           height: 2,
-          color: Colors.deepPurpleAccent,
+          color: Constants.blue,
         ),
         onChanged: (String? value) {
           // This is called when the user selects an item.
@@ -246,9 +231,10 @@ class AddRecipeState extends State<AddRecipe> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Constants.beige,
       appBar: AppBar(
         title: const Text('Add Recipe'),
-        backgroundColor: Constants.lightRedColor,
+        backgroundColor: Constants.primaryRed,
         centerTitle: true,
       ),
       drawer: const NavDrawer(),
@@ -278,7 +264,7 @@ class AddRecipeState extends State<AddRecipe> {
                 Row(children: <Widget>[Flexible(child: _buildCookTimeField()), const SizedBox(width: 10), Flexible(child: _buildCookTimeDropDown())]),
                 const SizedBox(height: 16),
                 MaterialButton(
-                    color: Colors.green,
+                    color: Constants.green,
                     child: const Text("Submit", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
                     onPressed: () async {
                       final isValid = formKey.currentState?.validate();

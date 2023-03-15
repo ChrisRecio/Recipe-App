@@ -41,7 +41,8 @@ class ViewRecipeListState extends State<ViewRecipeList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Recipe List'), backgroundColor: Constants.lightRedColor, centerTitle: true, actions: [
+      backgroundColor: Constants.beige,
+      appBar: AppBar(title: const Text('Recipe List'), backgroundColor: Constants.primaryRed, centerTitle: true, actions: [
         IconButton(
           onPressed: () {
             // print(_searchTerms);
@@ -67,7 +68,7 @@ class ViewRecipeListState extends State<ViewRecipeList> {
               itemBuilder: (BuildContext ctx, index) {
                 return InkWell(
                   child: Container(
-                    decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
+                    decoration: BoxDecoration(color: Constants.secondaryRed, borderRadius: const BorderRadius.all(Radius.circular(10))),
                     padding: const EdgeInsets.all(5.0),
                     child: Center(
                         child: Column(

@@ -69,7 +69,6 @@ class EditRecipeState extends State<EditRecipe> {
     _cookTimeMeasurement = widget.recipe.cookTimeMeasurement;
     _ingredientData = await IngredientProvider.getAllIngredientByRecipeId(_id);
     _stepsData = await RecipeStepProvider.getAllRecipeStepsByRecipeId(_id);
-    print(_stepsData);
 
     setState(() {
       _ingredients = "";
@@ -150,10 +149,8 @@ class EditRecipeState extends State<EditRecipe> {
 
   Widget _buildNameField() => TextFormField(
         initialValue: _name,
-        decoration: const InputDecoration(
-          labelText: 'Name',
-          border: OutlineInputBorder(),
-        ),
+        cursorColor: Constants.darkBeige,
+        decoration: Constants.textFormFieldDecoration('Name'),
         validator: (value) {
           if (value == null || value.isEmpty) {
             return 'Please enter the name of the recipe';
@@ -165,10 +162,8 @@ class EditRecipeState extends State<EditRecipe> {
 
   Widget _buildServingsField() => TextFormField(
         initialValue: _servings.toString(),
-        decoration: const InputDecoration(
-          labelText: 'Servings',
-          border: OutlineInputBorder(),
-        ),
+        cursorColor: Constants.darkBeige,
+        decoration: Constants.textFormFieldDecoration('Servings'),
         keyboardType: TextInputType.number,
         validator: (value) {
           if (value == null || value.isEmpty || int.parse(value) <= 0) {
@@ -183,10 +178,8 @@ class EditRecipeState extends State<EditRecipe> {
       ? const Center(child: CircularProgressIndicator())
       : TextFormField(
           initialValue: _ingredients,
-          decoration: const InputDecoration(
-            labelText: 'Ingredients',
-            border: OutlineInputBorder(),
-          ),
+          cursorColor: Constants.darkBeige,
+          decoration: Constants.textFormFieldDecoration('Ingredients'),
           keyboardType: TextInputType.multiline,
           maxLines: null,
           validator: (value) {
@@ -204,10 +197,8 @@ class EditRecipeState extends State<EditRecipe> {
       ? const Center(child: CircularProgressIndicator())
       : TextFormField(
           initialValue: _steps,
-          decoration: const InputDecoration(
-            labelText: 'Steps',
-            border: OutlineInputBorder(),
-          ),
+          cursorColor: Constants.darkBeige,
+          decoration: Constants.textFormFieldDecoration('Steps'),
           keyboardType: TextInputType.multiline,
           maxLines: null,
           validator: (value) {
@@ -223,10 +214,8 @@ class EditRecipeState extends State<EditRecipe> {
 
   Widget _buildDescriptionField() => TextFormField(
         initialValue: _description,
-        decoration: const InputDecoration(
-          labelText: 'Description',
-          border: OutlineInputBorder(),
-        ),
+        cursorColor: Constants.darkBeige,
+        decoration: Constants.textFormFieldDecoration('Description'),
         keyboardType: TextInputType.multiline,
         maxLines: null,
         onSaved: (value) => setState(() => _description = value!),
@@ -234,10 +223,8 @@ class EditRecipeState extends State<EditRecipe> {
 
   Widget _buildPrepTimeField() => TextFormField(
         initialValue: _prepTime.toString(),
-        decoration: const InputDecoration(
-          labelText: 'Prep Time',
-          border: OutlineInputBorder(),
-        ),
+        cursorColor: Constants.darkBeige,
+        decoration: Constants.textFormFieldDecorationWithIcon('Prep Time', const Icon(Icons.access_time)),
         keyboardType: TextInputType.number,
         validator: (value) {
           if (value == null || value.isEmpty || int.parse(value) <= 0) {
@@ -250,10 +237,8 @@ class EditRecipeState extends State<EditRecipe> {
 
   Widget _buildCookTimeField() => TextFormField(
         initialValue: _cookTime.toString(),
-        decoration: const InputDecoration(
-          labelText: 'Cook Time',
-          border: OutlineInputBorder(),
-        ),
+        cursorColor: Constants.darkBeige,
+        decoration: Constants.textFormFieldDecorationWithIcon('Cook Time', const Icon(Icons.access_time)),
         keyboardType: TextInputType.number,
         validator: (value) {
           if (value == null || value.isEmpty || int.parse(value) < 0) {
@@ -268,10 +253,10 @@ class EditRecipeState extends State<EditRecipe> {
         value: _prepTimeMeasurement,
         icon: const Icon(Icons.arrow_downward),
         elevation: 16,
-        style: const TextStyle(color: Colors.deepPurple),
+        style: TextStyle(color: Constants.blue),
         underline: Container(
           height: 2,
-          color: Colors.deepPurpleAccent,
+          color: Constants.blue,
         ),
         onChanged: (String? value) {
           // This is called when the user selects an item.
@@ -291,10 +276,10 @@ class EditRecipeState extends State<EditRecipe> {
         value: _cookTimeMeasurement,
         icon: const Icon(Icons.arrow_downward),
         elevation: 16,
-        style: const TextStyle(color: Colors.deepPurple),
+        style: TextStyle(color: Constants.blue),
         underline: Container(
           height: 2,
-          color: Colors.deepPurpleAccent,
+          color: Constants.blue,
         ),
         onChanged: (String? value) {
           // This is called when the user selects an item.
@@ -313,14 +298,15 @@ class EditRecipeState extends State<EditRecipe> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Constants.beige,
       appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ViewRecipeList())).whenComplete(initState),
+            onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ViewRecipeList())),
           ),
           title: Text('Edit $_name'),
           centerTitle: true,
-          backgroundColor: Constants.lightRedColor),
+          backgroundColor: Constants.primaryRed),
       body: Container(
         alignment: Alignment.center,
         margin: const EdgeInsets.all(24),
@@ -347,7 +333,7 @@ class EditRecipeState extends State<EditRecipe> {
                 Row(children: <Widget>[Flexible(child: _buildCookTimeField()), const SizedBox(width: 10), Flexible(child: _buildCookTimeDropDown())]),
                 const SizedBox(height: 16),
                 MaterialButton(
-                    color: Colors.green,
+                    color: Constants.green,
                     child: const Text("Submit", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
                     onPressed: () async {
                       final isValid = formKey.currentState?.validate();
@@ -368,48 +354,100 @@ class EditRecipeState extends State<EditRecipe> {
                         // Update Recipe
                         await RecipeProvider.updateRecipe(recipe);
 
-                        RecipeStep step;
                         Ingredient ingredient;
+                        RecipeStep step;
 
-                        // id INTEGER NOT NULL PRIMARY KEY autoincrement, recipeId INTEGER NOT NULL, ingredientName TEXT NOT NULL, FOREIGN KEY(recipeId) REFERENCES Recipe(id))
-                        // id INTEGER NOT NULL PRIMARY KEY autoincrement, recipeId INTEGER NOT NULL, stepNumber INTEGER NOT NULL, stepDescription TEXT, FOREIGN KEY(recipeId) REFERENCES Recipe(id))
-
-                        //ingredientData = Data from DB
-                        //[{id: 1, recipeId: 1, ingredientName: Bread}, {id: 2, recipeId: 1, ingredientName: Cheese}, {id: 3, recipeId: 1, ingredientName: Ham}]
-                        //_ingredientList = Data from TextFormField
-
-                        //stepsData = Data from DB
-                        //[{id: 1, recipeId: 1, stepNumber: 1, stepDescription: Take 2 pieces of bread}, {id: 2, recipeId: 1, stepNumber: 2, stepDescription: Place cheese and ham on top of 1 slice of bread}, {id: 3, recipeId: 1, stepNumber: 3, stepDescription: Place 2nd slice of bread over ham and cheese}]
-                        //_stepList = Data from TextFormField
+                        // UPDATE INGREDIENTS
 
                         // Compare db to textFormField entries and send to 1 of 3 cases below
                         if (_ingredientList.length == _ingredientData.length) {
-                          //same # of ingredients/steps => update each entry
+                          //same # of ingredients => update each entry
+
                           for (int i = 0; i < _ingredientList.length; i++) {
                             ingredient = Ingredient(_ingredientData[i]['id'], _ingredientData[i]['recipeId'], _ingredientList[i]);
                             await IngredientProvider.updateIngredient(ingredient);
                           }
                         } else if (_ingredientList.length > _ingredientData.length) {
-                          // larger # of ingredients/steps => update each entry + create new entry
+                          // larger # of ingredients => update each entry + create new entry
+
+                          int itemsInDb = _ingredientData.length;
+                          // Loop through entries from input
+                          for (int i = 0; i < _ingredientList.length; i++) {
+                            if (i < itemsInDb) {
+                              // Update existing ingredients
+                              ingredient = Ingredient(_ingredientData[i]['id'], _ingredientData[i]['recipeId'], _ingredientList[i]);
+                              await IngredientProvider.updateIngredient(ingredient);
+                            } else if (i >= itemsInDb) {
+                              // Create new ingredient
+                              ingredient = Ingredient(null, _ingredientData[0]['recipeId'], _ingredientList[i]);
+                              await IngredientProvider.createIngredient(ingredient);
+                            }
+                          }
                         } else if (_ingredientList.length < _ingredientData.length) {
-                          // if lower # of ingredients/steps => update each entry + delete extras
+                          // if lower # of ingredients => update each entry + delete extras
+
+                          int itemsInInput = _ingredientList.length;
+                          // Loop through entries from database
+                          for (int i = 0; i < _ingredientData.length; i++) {
+                            if (i < itemsInInput) {
+                              // Update existing ingredients
+                              ingredient = Ingredient(_ingredientData[i]['id'], _ingredientData[i]['recipeId'], _ingredientList[i]);
+                              await IngredientProvider.updateIngredient(ingredient);
+                            } else if (i >= itemsInInput) {
+                              // Delete ingredient if greater than # in input
+                              await IngredientProvider.deleteIngredient(_ingredientData[i]['id']);
+                            }
+                          }
                         } else {
+                          // probably add a better error message
                           print("if you're here then you win\nnot sure what to tell you");
                         }
 
-                        // Insert ingredients
-/*
-                        for (int i = 0; i < _ingredientList.length; i++) {
-                          ingredient = Ingredient(null, _id, _ingredients[i]);
-                          await IngredientProvider.createIngredient(ingredient);
-                        }
+                        // UPDATE RECIPE STEPS
 
-                        // Insert steps
-                        for (int i = 0; i < _stepList.length; i++) {
-                          step = RecipeStep(null, _id, i + 1, _steps[i]);
-                          await RecipeStepProvider.createRecipeStep(step);
+                        // Compare db to textFormField entries and send to 1 of 3 cases below
+                        if (_stepList.length == _stepsData.length) {
+                          //same # of steps => update each entry
+
+                          for (int i = 0; i < _stepList.length; i++) {
+                            step = RecipeStep(_stepsData[i]['id'], _stepsData[i]['recipeId'], i + 1, _stepList[i]);
+                            await RecipeStepProvider.updateRecipeStep(step);
+                          }
+                        } else if (_stepList.length > _stepsData.length) {
+                          // larger # of steps => update each entry + create new entry
+
+                          int itemsInDb = _stepsData.length;
+                          // Loop through entries from input
+                          for (int i = 0; i < _stepList.length; i++) {
+                            if (i < itemsInDb) {
+                              // Update existing ingredients
+                              step = RecipeStep(_stepsData[i]['id'], _stepsData[i]['recipeId'], i + 1, _stepList[i]);
+                              await RecipeStepProvider.updateRecipeStep(step);
+                            } else if (i >= itemsInDb) {
+                              // Create new ingredient
+                              step = RecipeStep(null, _stepsData[0]['recipeId'], i + 1, _stepList[i]);
+                              await RecipeStepProvider.createRecipeStep(step);
+                            }
+                          }
+                        } else if (_stepList.length < _stepsData.length) {
+                          // if lower # of steps => update each entry + delete extras
+
+                          int itemsInInput = _ingredientList.length;
+                          // Loop through entries from database
+                          for (int i = 0; i < _ingredientData.length; i++) {
+                            if (i < itemsInInput) {
+                              // Update existing ingredients
+                              step = RecipeStep(_stepsData[i]['id'], _stepsData[i]['recipeId'], i + 1, _stepList[i]);
+                              await RecipeStepProvider.updateRecipeStep(step);
+                            } else if (i >= itemsInInput) {
+                              // Delete ingredient if greater than # in input
+                              await IngredientProvider.deleteIngredient(_stepsData[i]['id']);
+                            }
+                          }
+                        } else {
+                          // probably add a better error message
+                          print("if you're here then you win\nnot sure what to tell you");
                         }
-*/
 
                         final message = '$_name has been updated';
                         final snackBar = SnackBar(
@@ -417,7 +455,7 @@ class EditRecipeState extends State<EditRecipe> {
                             message,
                             style: const TextStyle(fontSize: 20),
                           ),
-                          backgroundColor: Colors.orange,
+                          backgroundColor: Constants.primaryRed,
                         );
 
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);

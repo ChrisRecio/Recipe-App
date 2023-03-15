@@ -16,10 +16,11 @@ class SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Constants.beige,
       appBar: AppBar(
         title: const Text('Settings'),
         centerTitle: true,
-        backgroundColor: Constants.lightRedColor,
+        backgroundColor: Constants.primaryRed,
       ),
       drawer: const NavDrawer(),
       body: Container(),

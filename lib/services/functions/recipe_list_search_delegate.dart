@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:recipe_app/services/functions/recipe_provider.dart';
 
+import '../../assets/constants.dart';
 import '../../pages/view_recipe.dart';
 import '../models/recipe.dart';
 
@@ -59,66 +60,66 @@ class RecipeListSearchDelegate extends SearchDelegate {
   // query results
   @override
   Widget buildResults(BuildContext context) {
-    // recipesByName = await _searchRecipeByName(query);
-    // print(recipesByName);
-
-    return FutureBuilder(
-      future: _searchRecipeByName(query),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return GridView.builder(
-              padding: const EdgeInsets.all(10),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10.0,
-                mainAxisSpacing: 10.0,
-              ),
-              itemCount: recipesByName.length,
-              itemBuilder: (BuildContext ctx, index) {
-                return InkWell(
-                  child: Container(
-                    decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
-                    padding: const EdgeInsets.all(5.0),
-                    child: Center(
-                        child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        ClipRRect(
-                          borderRadius: const BorderRadius.all(Radius.circular(10)),
-                          child: recipesByName[index]['image'] != null
-                              ? Image.file(
-                                  File(recipesByName[index]['image']),
-                                  fit: BoxFit.cover,
-                                  height: 140,
-                                )
-                              : Image.asset(
-                                  'assets/images/logo.jpg',
-                                  fit: BoxFit.cover,
-                                  height: 140,
-                                ),
-                        ),
-                        Text(
-                          recipesByName[index]['name'],
-                          style: const TextStyle(fontSize: 20.0),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    )),
-                  ),
-                  onTap: () => {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ViewRecipe(recipe: Recipe.fromMap(recipesByName[index])),
-                        ))
-                  },
-                );
-              });
-        } else if (snapshot.hasError) {
-          return const Text("Error");
-        }
-        return const Text("Loading...");
-      },
+    return Container(
+      color: Constants.beige,
+      child: FutureBuilder(
+        future: _searchRecipeByName(query),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return GridView.builder(
+                padding: const EdgeInsets.all(10),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10.0,
+                  mainAxisSpacing: 10.0,
+                ),
+                itemCount: recipesByName.length,
+                itemBuilder: (BuildContext ctx, index) {
+                  return InkWell(
+                    child: Container(
+                      decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
+                      padding: const EdgeInsets.all(5.0),
+                      child: Center(
+                          child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          ClipRRect(
+                            borderRadius: const BorderRadius.all(Radius.circular(10)),
+                            child: recipesByName[index]['image'] != null
+                                ? Image.file(
+                                    File(recipesByName[index]['image']),
+                                    fit: BoxFit.cover,
+                                    height: 140,
+                                  )
+                                : Image.asset(
+                                    'assets/images/logo.jpg',
+                                    fit: BoxFit.cover,
+                                    height: 140,
+                                  ),
+                          ),
+                          Text(
+                            recipesByName[index]['name'],
+                            style: const TextStyle(fontSize: 20.0),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      )),
+                    ),
+                    onTap: () => {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ViewRecipe(recipe: Recipe.fromMap(recipesByName[index])),
+                          ))
+                    },
+                  );
+                });
+          } else if (snapshot.hasError) {
+            return const Text("Error");
+          }
+          return const Text("Loading...");
+        },
+      ),
     );
   }
 
@@ -128,18 +129,30 @@ class RecipeListSearchDelegate extends SearchDelegate {
     _refreshRecipeList();
     List<String> suggestions = searchResults.where((i) => i.toLowerCase().contains(query.toLowerCase())).toList();
 
-    return ListView.builder(
+    return Container(
+      color: Constants.beige,
+      child: ListView.separated(
         itemCount: suggestions.length,
         itemBuilder: (context, index) {
           final suggestion = suggestions[index];
 
-          return ListTile(
-            title: Text(suggestion),
-            onTap: () {
-              query = suggestion;
-              showResults(context);
-            },
+          return Container(
+            color: Constants.lightBeige,
+            child: ListTile(
+              title: Text(suggestion),
+              onTap: () {
+                query = suggestion;
+                showResults(context);
+              },
+            ),
           );
-        });
+        },
+        separatorBuilder: (context, index) {
+          return const Divider(
+            height: 1,
+          );
+        },
+      ),
+    );
   }
 }

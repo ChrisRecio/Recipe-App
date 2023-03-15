@@ -11,6 +11,7 @@ class NavDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Drawer(
+        backgroundColor: Constants.beige,
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -25,7 +26,7 @@ class NavDrawer extends StatelessWidget {
   Widget buildHeader(BuildContext context) => SizedBox(
         height: MediaQuery.of(context).size.height / 3,
         child: DrawerHeader(
-            decoration: BoxDecoration(color: Constants.lightRedColor),
+            decoration: BoxDecoration(color: Constants.primaryRed),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
