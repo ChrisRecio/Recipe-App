@@ -74,13 +74,13 @@ class AddRecipeState extends State<AddRecipe> {
         _image != null ? Image.file(_image!) : const Text("No image selected"),
         const SizedBox(height: 5),
         MaterialButton(
-            color: Colors.blue,
+            color: Constants.blue,
             child: const Text("Pick Image from Gallery", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
             onPressed: () {
               pickImage();
             }),
         MaterialButton(
-            color: Colors.blue,
+            color: Constants.blue,
             child: const Text("Pick Image from Camera", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
             onPressed: () {
               pickImageCamera();
@@ -308,7 +308,7 @@ class AddRecipeState extends State<AddRecipe> {
                             message,
                             style: const TextStyle(fontSize: 20),
                           ),
-                          backgroundColor: Colors.orange,
+                          backgroundColor: Constants.primaryRed,
                         );
 
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);

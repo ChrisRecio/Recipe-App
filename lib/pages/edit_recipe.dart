@@ -129,13 +129,13 @@ class EditRecipeState extends State<EditRecipe> {
         _image != null ? Image.file(_image!) : const Text("No image selected"),
         const SizedBox(height: 5),
         MaterialButton(
-            color: Colors.blue,
+            color: Constants.blue,
             child: const Text("Pick Image from Gallery", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
             onPressed: () {
               pickImage();
             }),
         MaterialButton(
-            color: Colors.blue,
+            color: Constants.blue,
             child: const Text("Pick Image from Camera", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
             onPressed: () {
               pickImageCamera();
@@ -302,7 +302,10 @@ class EditRecipeState extends State<EditRecipe> {
       appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ViewRecipeList())),
+            // Routing acts strange when swiping back on physical device
+            // Must fix
+            onPressed: () => Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const ViewRecipeList()),
+                (route) => route.isFirst), /*Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ViewRecipeList()))*/
           ),
           title: Text('Edit $_name'),
           centerTitle: true,
