@@ -17,8 +17,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Recipe List',
       theme: ThemeData(
-        primarySwatch: Colors.green,
-      ),
+          primarySwatch: Constants.getMaterialColor(Constants.primaryRed),
+          textSelectionTheme: TextSelectionThemeData(
+            cursorColor: Constants.secondaryRed,
+            selectionColor: Constants.textHighlightRed,
+            selectionHandleColor: Constants.secondaryRed,
+          )),
       home: HomePage(title: 'Recipe List'),
     );
   }
