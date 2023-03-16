@@ -129,60 +129,69 @@ class ViewRecipeState extends State<ViewRecipe> {
     String? image = widget.recipe.image;
 
     if (image != null) {
-      return SliverAppBar(
-        primary: true,
-        pinned: true,
-        expandedHeight: MediaQuery.of(context).size.height * 0.35,
-        backgroundColor: Constants.primaryRed,
-        actions: [
-          _popupMenu(),
-        ],
-        leading: InkWell(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: Icon(
-            Icons.arrow_back,
-            color: Constants.white,
-          ),
-        ),
-        flexibleSpace: FlexibleSpaceBar(
-          stretchModes: const <StretchMode>[
-            StretchMode.zoomBackground,
-            StretchMode.fadeTitle,
-          ],
-          centerTitle: true,
-          title: Text(
-            widget.recipe.name,
-            style: const TextStyle(fontSize: 30.0),
-            textAlign: TextAlign.center,
-          ),
-          collapseMode: CollapseMode.pin,
-          background: Stack(
-            fit: StackFit.expand,
-            children: <Widget>[
-              Image.file(
-                File(widget.recipe.image!),
-                fit: BoxFit.cover,
+      return SliverLayoutBuilder(
+        builder: (BuildContext context, constraints) {
+          final scrolled = constraints.scrollOffset > 0;
+          return SliverAppBar(
+            primary: true,
+            pinned: true,
+            expandedHeight: MediaQuery.of(context).size.height * 0.35,
+            backgroundColor: scrolled ? Constants.primaryRed : Constants.beige,
+            actions: [
+              _popupMenu(),
+            ],
+            leading: InkWell(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Icon(
+                Icons.arrow_back,
+                color: Constants.white,
               ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  height: 20,
-                  width: MediaQuery.of(context).size.width,
-                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 0),
-                  decoration: BoxDecoration(
-                    color: Constants.beige,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(35),
-                      topRight: Radius.circular(35),
+            ),
+            flexibleSpace: FlexibleSpaceBar(
+              stretchModes: const <StretchMode>[
+                StretchMode.zoomBackground,
+                StretchMode.fadeTitle,
+              ],
+              centerTitle: true,
+              title: Text(
+                widget.recipe.name,
+                style: const TextStyle(fontSize: 30.0),
+                textAlign: TextAlign.center,
+              ),
+              collapseMode: CollapseMode.pin,
+              background: Container(
+                color: Constants.beige,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: <Widget>[
+                    // maybe add 5px beige container under image to hide line?
+                    Image.file(
+                      File(widget.recipe.image!),
+                      fit: BoxFit.cover,
                     ),
-                  ),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        height: 20,
+                        width: MediaQuery.of(context).size.width,
+                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 0),
+                        decoration: BoxDecoration(
+                          color: Constants.beige,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(35),
+                            topRight: Radius.circular(35),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       );
     } else {
       return SliverAppBar(
@@ -231,6 +240,18 @@ class ViewRecipeState extends State<ViewRecipe> {
         const Icon(Icons.access_time),
         const SizedBox(width: 5),
         Text("Cook time: $cookTime $cookTimeMeasurement"),
+      ],
+    );
+  }
+
+  Widget _buildDescriptionField() {
+    String description = widget.recipe.description;
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text("Description"),
+        Text(description),
       ],
     );
   }
@@ -296,6 +317,8 @@ class ViewRecipeState extends State<ViewRecipe> {
                 _buildServingField(),
                 const SizedBox(height: 16),
                 _buildTimeField(),
+                const SizedBox(height: 16),
+                _buildDescriptionField(),
                 const SizedBox(height: 16),
                 _buildIngredientField(),
                 const SizedBox(height: 16),
