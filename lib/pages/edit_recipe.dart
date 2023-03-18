@@ -149,7 +149,6 @@ class EditRecipeState extends State<EditRecipe> {
 
   Widget _buildNameField() => TextFormField(
         initialValue: _name,
-        cursorColor: Constants.darkBeige,
         decoration: Constants.textFormFieldDecoration('Name'),
         validator: (value) {
           if (value == null || value.isEmpty) {
@@ -162,7 +161,6 @@ class EditRecipeState extends State<EditRecipe> {
 
   Widget _buildServingsField() => TextFormField(
         initialValue: _servings.toString(),
-        cursorColor: Constants.darkBeige,
         decoration: Constants.textFormFieldDecoration('Servings'),
         keyboardType: TextInputType.number,
         validator: (value) {
@@ -178,7 +176,6 @@ class EditRecipeState extends State<EditRecipe> {
       ? const Center(child: CircularProgressIndicator())
       : TextFormField(
           initialValue: _ingredients,
-          cursorColor: Constants.darkBeige,
           decoration: Constants.textFormFieldDecoration('Ingredients'),
           keyboardType: TextInputType.multiline,
           maxLines: null,
@@ -197,7 +194,6 @@ class EditRecipeState extends State<EditRecipe> {
       ? const Center(child: CircularProgressIndicator())
       : TextFormField(
           initialValue: _steps,
-          cursorColor: Constants.darkBeige,
           decoration: Constants.textFormFieldDecoration('Steps'),
           keyboardType: TextInputType.multiline,
           maxLines: null,
@@ -214,7 +210,6 @@ class EditRecipeState extends State<EditRecipe> {
 
   Widget _buildDescriptionField() => TextFormField(
         initialValue: _description,
-        cursorColor: Constants.darkBeige,
         decoration: Constants.textFormFieldDecoration('Description'),
         keyboardType: TextInputType.multiline,
         maxLines: null,
@@ -223,7 +218,6 @@ class EditRecipeState extends State<EditRecipe> {
 
   Widget _buildPrepTimeField() => TextFormField(
         initialValue: _prepTime.toString(),
-        cursorColor: Constants.darkBeige,
         decoration: Constants.textFormFieldDecorationWithIcon('Prep Time', const Icon(Icons.access_time)),
         keyboardType: TextInputType.number,
         validator: (value) {
@@ -237,7 +231,6 @@ class EditRecipeState extends State<EditRecipe> {
 
   Widget _buildCookTimeField() => TextFormField(
         initialValue: _cookTime.toString(),
-        cursorColor: Constants.darkBeige,
         decoration: Constants.textFormFieldDecorationWithIcon('Cook Time', const Icon(Icons.access_time)),
         keyboardType: TextInputType.number,
         validator: (value) {

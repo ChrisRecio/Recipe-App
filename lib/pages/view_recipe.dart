@@ -298,34 +298,27 @@ class ViewRecipeState extends State<ViewRecipe> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'View Recipe',
-      theme: ThemeData(
-        brightness: Brightness.light,
-        colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Constants.secondaryRed),
-      ),
-      home: Scaffold(
-          backgroundColor: Constants.beige,
-          extendBodyBehindAppBar: true,
-          body: CustomScrollView(
-            physics: const ClampingScrollPhysics(),
-            slivers: [
-              _buildAppBar(),
-              SliverList(
-                  delegate: SliverChildListDelegate([
-                const SizedBox(height: 16),
-                _buildServingField(),
-                const SizedBox(height: 16),
-                _buildTimeField(),
-                const SizedBox(height: 16),
-                _buildDescriptionField(),
-                const SizedBox(height: 16),
-                _buildIngredientField(),
-                const SizedBox(height: 16),
-                _buildStepField(),
-              ])),
-            ],
-          )),
-    );
+    return Scaffold(
+        backgroundColor: Constants.beige,
+        extendBodyBehindAppBar: true,
+        body: CustomScrollView(
+          physics: const ClampingScrollPhysics(),
+          slivers: [
+            _buildAppBar(),
+            SliverList(
+                delegate: SliverChildListDelegate([
+              const SizedBox(height: 16),
+              _buildServingField(),
+              const SizedBox(height: 16),
+              _buildTimeField(),
+              const SizedBox(height: 16),
+              _buildDescriptionField(),
+              const SizedBox(height: 16),
+              _buildIngredientField(),
+              const SizedBox(height: 16),
+              _buildStepField(),
+            ])),
+          ],
+        ));
   }
 }

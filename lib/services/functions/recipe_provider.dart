@@ -30,6 +30,12 @@ class RecipeProvider {
     return db.rawQuery("SELECT name FROM Recipe");
   }
 
+  // Get n Recipes
+  static Future<List<Map<String, Object?>>> getNRecipes(int n) async {
+    final db = await DbManager.db();
+    return db.rawQuery("SELECT * FROM Recipe LIMIT $n");
+  }
+
   // Get Recipe by Id
   static Future<List<Map<String, dynamic>>> getRecipeById(int id) async {
     final db = await DbManager.db();

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../assets/constants.dart';
-import '../services/models/recipe.dart';
+import '../services/functions/recipe_provider.dart';
 import '../widgets/nav_drawer.dart';
+import '../widgets/recipeGridView.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,47 +15,93 @@ class HomePage extends StatefulWidget {
 }
 
 class HomeState extends State<HomePage> {
-  List<Recipe>? recipeList;
+  List<Map<String, dynamic>> _recipeList = [];
+  final int _numOfRecipesDisplayed = 5;
+
+  bool _isLoading = true;
+  void _refreshRecipeList() async {
+    final data = await RecipeProvider.getNRecipes(_numOfRecipesDisplayed);
+    setState(() {
+      _recipeList = data;
+      _isLoading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshRecipeList();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Constants.beige,
       appBar: AppBar(
-        title: const Text("{PLACEHOLDER APP NAME}"),
+        title: const Text("PLACEHOLDER APP NAME"),
         centerTitle: true,
         backgroundColor: Constants.primaryRed,
       ),
       drawer: const NavDrawer(),
-      body: Container(
-          margin: const EdgeInsets.all(24),
-          child: SingleChildScrollView(
-            child: Column(
-              children: const <Widget>[
-                Card(
-                  color: Colors.white38,
-                  child: SizedBox(
-                    height: 100,
-                    child: Center(child: Text('Temp')),
-                  ),
-                ),
-                Card(
-                  color: Colors.white38,
-                  child: SizedBox(
-                    height: 100,
-                    child: Center(child: Text('Temp1')),
-                  ),
-                ),
-                Card(
-                  color: Colors.white38,
-                  child: SizedBox(
-                    height: 100,
-                    child: Center(child: Text('Temp2')),
-                  ),
-                ),
-              ],
+      body: Column(children: [
+        featuredRecipe(),
+        const SizedBox(
+          height: 10,
+        ),
+        horizontalScrollRecipes(),
+      ]),
+    );
+  }
+
+  Widget featuredRecipe() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(
+            left: 15,
+            top: 10,
+          ),
+          child: Text(
+            'Trending',
+            style: TextStyle(fontSize: 30),
+          ),
+        ),
+        Card(
+          margin: const EdgeInsets.all(10),
+          color: Constants.secondaryRed,
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height / 2,
+            child: const Center(
+                child: Text(
+              'Recipe suggestion goes here',
+              style: TextStyle(fontSize: 20),
+            )),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget horizontalScrollRecipes() {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(
+              left: 15,
             ),
-          )),
+            child: Text(
+              'Your Recipes',
+              style: TextStyle(fontSize: 30),
+            ),
+          ),
+          Expanded(
+            child: _isLoading ? const Center(child: CircularProgressIndicator()) : recipeGridView(context, _recipeList, 1, Axis.horizontal, true),
+          ),
+        ],
+      ),
     );
   }
 }

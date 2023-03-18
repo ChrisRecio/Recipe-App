@@ -93,7 +93,6 @@ class AddRecipeState extends State<AddRecipe> {
   }
 
   Widget _buildNameField() => TextFormField(
-        cursorColor: Constants.darkBeige,
         decoration: Constants.textFormFieldDecoration('Name'),
         validator: (value) {
           if (value == null || value.isEmpty) {
@@ -105,7 +104,6 @@ class AddRecipeState extends State<AddRecipe> {
       );
 
   Widget _buildServingsField() => TextFormField(
-        cursorColor: Constants.darkBeige,
         decoration: Constants.textFormFieldDecoration('Servings'),
         keyboardType: TextInputType.number,
         validator: (value) {
@@ -118,7 +116,6 @@ class AddRecipeState extends State<AddRecipe> {
       );
 
   Widget _buildIngredientsField() => TextFormField(
-        cursorColor: Constants.darkBeige,
         decoration: Constants.textFormFieldDecoration('Ingredients'),
         keyboardType: TextInputType.multiline,
         maxLines: null,
@@ -134,7 +131,6 @@ class AddRecipeState extends State<AddRecipe> {
       );
 
   Widget _buildStepsField() => TextFormField(
-        cursorColor: Constants.darkBeige,
         decoration: Constants.textFormFieldDecoration('Steps'),
         keyboardType: TextInputType.multiline,
         maxLines: null,
@@ -150,14 +146,12 @@ class AddRecipeState extends State<AddRecipe> {
       );
 
   Widget _buildDescriptionField() => TextFormField(
-        cursorColor: Constants.darkBeige,
         decoration: Constants.textFormFieldDecoration('Description'),
         keyboardType: TextInputType.multiline,
         maxLines: null,
         onSaved: (value) => setState(() => _description = value!),
       );
   Widget _buildPrepTimeField() => TextFormField(
-        cursorColor: Constants.darkBeige,
         decoration: Constants.textFormFieldDecorationWithIcon('Prep Time', const Icon(Icons.access_time)),
         keyboardType: TextInputType.number,
         validator: (value) {
@@ -170,7 +164,6 @@ class AddRecipeState extends State<AddRecipe> {
       );
 
   Widget _buildCookTimeField() => TextFormField(
-        cursorColor: Constants.darkBeige,
         decoration: Constants.textFormFieldDecorationWithIcon('Cook Time', const Icon(Icons.access_time)),
         keyboardType: TextInputType.number,
         validator: (value) {

@@ -13,29 +13,6 @@ class Constants {
   static Color white = const Color.fromARGB(255, 255, 255, 255);
   static Color black = const Color.fromARGB(255, 0, 0, 0);
 
-  // TextFormField Constants
-
-  static InputDecoration textFormFieldDecoration(String name) => InputDecoration(
-      labelText: name,
-      labelStyle: TextStyle(color: darkBeige),
-      filled: true,
-      fillColor: lightBeige,
-      focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: Constants.darkBeige, width: 2.0),
-      ),
-      border: const OutlineInputBorder(borderSide: BorderSide()));
-
-  static InputDecoration textFormFieldDecorationWithIcon(String name, Icon icon) => InputDecoration(
-      labelText: name,
-      prefixIcon: icon,
-      labelStyle: TextStyle(color: darkBeige),
-      filled: true,
-      fillColor: lightBeige,
-      focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: Constants.darkBeige, width: 2.0),
-      ),
-      border: const OutlineInputBorder(borderSide: BorderSide()));
-
   // Convert Color to MaterialColor
   static MaterialColor getMaterialColor(Color color) {
     final int red = color.red;
@@ -57,4 +34,26 @@ class Constants {
 
     return MaterialColor(color.value, shades);
   }
+
+  // TextFormField Constants
+  static InputDecoration textFormFieldDecoration(String name) => InputDecoration(
+      labelText: name,
+      labelStyle: TextStyle(color: darkBeige),
+      filled: true,
+      fillColor: lightBeige,
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Constants.darkBeige, width: 2.0),
+      ),
+      border: const OutlineInputBorder(borderSide: BorderSide()));
+
+  static InputDecoration textFormFieldDecorationWithIcon(String name, Icon icon) => InputDecoration(
+      labelText: name,
+      prefixIcon: icon,
+      labelStyle: TextStyle(color: darkBeige),
+      filled: true,
+      fillColor: lightBeige,
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Constants.darkBeige, width: 2.0),
+      ),
+      border: const OutlineInputBorder(borderSide: BorderSide()));
 }
