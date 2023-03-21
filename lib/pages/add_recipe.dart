@@ -115,19 +115,88 @@ class AddRecipeState extends State<AddRecipe> {
         onSaved: (value) => setState(() => _servings = int.parse(value!)),
       );
 
-  Widget _buildIngredientsField() => TextFormField(
-        decoration: Constants.textFormFieldDecoration('Ingredients'),
-        keyboardType: TextInputType.multiline,
-        maxLines: null,
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter at least 1 ingredient';
-          }
-          return null;
-        },
-        onSaved: (value) => setState(() {
-          _ingredients = ls.convert(value!);
-        }),
+  Widget _buildIngredientsField() => Column(
+        children: [
+          Flex(
+            direction: Axis.horizontal,
+            children: [
+              Expanded(
+                child: MaterialButton(
+                  color: Constants.lightBeige,
+                  onPressed: () => {},
+                  child: const Text(
+                    "1/8",
+                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: MaterialButton(
+                  color: Constants.lightBeige,
+                  onPressed: () => {},
+                  child: const Text(
+                    "1/4",
+                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: MaterialButton(
+                  color: Constants.lightBeige,
+                  onPressed: () => {},
+                  child: const Text(
+                    "1/3",
+                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: MaterialButton(
+                  color: Constants.lightBeige,
+                  onPressed: () => {},
+                  child: const Text(
+                    "1/2",
+                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: MaterialButton(
+                  color: Constants.lightBeige,
+                  onPressed: () => {},
+                  child: const Text(
+                    "2/3",
+                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: MaterialButton(
+                  color: Constants.lightBeige,
+                  onPressed: () => {},
+                  child: const Text(
+                    "3/4",
+                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          TextFormField(
+            decoration: Constants.textFormFieldDecoration('Ingredients'),
+            keyboardType: TextInputType.multiline,
+            maxLines: null,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter at least 1 ingredient';
+              }
+              return null;
+            },
+            onSaved: (value) => setState(() {
+              _ingredients = ls.convert(value!);
+            }),
+          ),
+        ],
       );
 
   Widget _buildStepsField() => TextFormField(

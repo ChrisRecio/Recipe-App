@@ -43,17 +43,21 @@ class HomeState extends State<HomePage> {
         backgroundColor: Constants.primaryRed,
       ),
       drawer: const NavDrawer(),
-      body: Column(children: [
-        featuredRecipe(),
-        const SizedBox(
-          height: 10,
-        ),
-        horizontalScrollRecipes(),
-      ]),
+      body: Column(
+        children: [
+          featuredRecipe(),
+          const SizedBox(
+            height: 10,
+          ),
+          horizontalScrollRecipes(),
+        ],
+      ),
     );
   }
 
   Widget featuredRecipe() {
+    List<Widget> children = [recipeCard(), recipeCard(), recipeCard()];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -67,16 +71,23 @@ class HomeState extends State<HomePage> {
             style: TextStyle(fontSize: 30),
           ),
         ),
-        Card(
-          margin: const EdgeInsets.all(10),
-          color: Constants.secondaryRed,
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height / 2,
-            child: const Center(
-                child: Text(
-              'Recipe suggestion goes here',
-              style: TextStyle(fontSize: 20),
-            )),
+        SizedBox(
+          height: MediaQuery.of(context).size.height / 2,
+          child: Container(
+            color: Constants.beige,
+            margin: const EdgeInsets.all(10),
+            // TODO
+            // IMPLEMENT THIS PACKAGE
+            // https://pub.dev/packages/smooth_page_indicator
+            child: Scrollbar(
+              child: ListView.builder(
+                shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
+                physics: const PageScrollPhysics(), // this for snapping
+                itemCount: children.length,
+                itemBuilder: (_, index) => children[index],
+              ),
+            ),
           ),
         ),
       ],
@@ -98,10 +109,27 @@ class HomeState extends State<HomePage> {
             ),
           ),
           Expanded(
-            child: _isLoading ? const Center(child: CircularProgressIndicator()) : recipeGridView(context, _recipeList, 1, Axis.horizontal, true),
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : Scrollbar(child: recipeGridView(context, _recipeList, 1, Axis.horizontal, true)),
           ),
         ],
       ),
     );
   }
+
+  Widget recipeCard() => SizedBox(
+        width: MediaQuery.of(context).size.width - 20,
+        child: Card(
+          shadowColor: Constants.darkBeige,
+          margin: const EdgeInsets.all(10),
+          color: Constants.secondaryRed,
+          child: const Center(
+            child: Text(
+              'Recipe suggestion goes here',
+              style: TextStyle(fontSize: 20),
+            ),
+          ),
+        ),
+      );
 }

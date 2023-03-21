@@ -52,7 +52,9 @@ class ViewRecipeListState extends State<ViewRecipeList> {
         )
       ]),
       drawer: const NavDrawer(),
-      body: _isLoading ? const Center(child: CircularProgressIndicator()) : recipeGridView(context, _recipeList, 2, Axis.vertical, false),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Scrollbar(child: recipeGridView(context, _recipeList, 2, Axis.vertical, false)),
     );
   }
 }
