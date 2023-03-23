@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../assets/constants.dart';
 import '../services/functions/recipe_provider.dart';
 import '../widgets/nav_drawer.dart';
-import '../widgets/recipeGridView.dart';
+import '../widgets/recipe_grid_view.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,6 +18,7 @@ class HomePage extends StatefulWidget {
 class HomeState extends State<HomePage> {
   List<Map<String, dynamic>> _recipeList = [];
   final int _numOfRecipesDisplayed = 5;
+  final PageController _controller = PageController(/*viewportFraction: 0.95,*/ keepPage: true, initialPage: 1);
 
   bool _isLoading = true;
   void _refreshRecipeList() async {
@@ -31,6 +33,12 @@ class HomeState extends State<HomePage> {
   void initState() {
     super.initState();
     _refreshRecipeList();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -73,21 +81,19 @@ class HomeState extends State<HomePage> {
         ),
         SizedBox(
           height: MediaQuery.of(context).size.height / 2,
-          child: Container(
-            color: Constants.beige,
-            margin: const EdgeInsets.all(10),
-            // TODO
-            // IMPLEMENT THIS PACKAGE
-            // https://pub.dev/packages/smooth_page_indicator
-            child: Scrollbar(
-              child: ListView.builder(
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                physics: const PageScrollPhysics(), // this for snapping
-                itemCount: children.length,
-                itemBuilder: (_, index) => children[index],
-              ),
-            ),
+          child: PageView.builder(
+              controller: _controller,
+              scrollDirection: Axis.horizontal,
+              physics: const PageScrollPhysics(),
+              itemCount: children.length,
+              itemBuilder: (_, index) => children[index]),
+        ),
+        Center(
+          child: SmoothPageIndicator(
+            controller: _controller, // PageController
+            count: children.length,
+            effect: ExpandingDotsEffect(activeDotColor: Constants.secondaryRed),
+            onDotClicked: (index) {},
           ),
         ),
       ],

@@ -2,10 +2,6 @@ import 'dart:async';
 
 import 'package:sqflite/sqflite.dart';
 
-// REFERENCE
-//https://medium.flutterdevs.com/sql-database-storage-using-sqlite-in-flutter-6e2fdcc8cfb7
-//https://www.kindacode.com/article/flutter-sqlite/
-
 class DbManager {
   static const String _courseTable = "CREATE TABLE Course(id INTEGER NOT NULL PRIMARY KEY autoincrement, course_name TEXT);";
   static const String _ingredientTable =

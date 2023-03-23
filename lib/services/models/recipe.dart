@@ -1,6 +1,5 @@
 // SQL
 // CREATE TABLE IF NOT EXISTS Recipe(id INTEGER NOT NULL PRIMARY KEY autoincrement, name TEXT, image BLOB, servings INTEGER NOT NULL, description TEXT, courseId INTEGER NOT NULL, prepTime TIME, prepTimeMeasurement TEXT, cookTime TIME, cookTimeMeasurement TEXT, FOREIGN KEY(courseId) REFERENCES Course(id));
-
 class Recipe {
   int? _id;
   String _name;
@@ -8,9 +7,9 @@ class Recipe {
   int _servings;
   String _description;
   int _course;
-  int _prepTime;
+  double _prepTime;
   String _prepTimeMeasurement;
-  int _cookTime;
+  double _cookTime;
   String _cookTimeMeasurement;
 
   Recipe(this._id, this._name, this._image, this._servings, this._description, this._course, this._prepTime, this._prepTimeMeasurement,
@@ -51,14 +50,14 @@ class Recipe {
     return 'recipe{id: $_id, name: $_name, servings: $_servings, description:$_description, course_id: $_course, prepTime: $_prepTime, prepTimeMeasurement: $_prepTimeMeasurement, cookTime: $_cookTime, cookTimeMeasurement: $_cookTimeMeasurement,}';
   }
 
-  int get cookTime => _cookTime;
-  set cookTime(int value) => _cookTime = value;
+  double get cookTime => _cookTime;
+  set cookTime(double value) => _cookTime = value;
 
   String get cookTimeMeasurement => _cookTimeMeasurement;
   set cookTimeMeasurement(String value) => _cookTimeMeasurement = value;
 
-  int get prepTime => _prepTime;
-  set prepTime(int value) => _prepTime = value;
+  double get prepTime => _prepTime;
+  set prepTime(double value) => _prepTime = value;
 
   String get prepTimeMeasurement => _prepTimeMeasurement;
   set prepTimeMeasurement(String value) => _prepTimeMeasurement = value;

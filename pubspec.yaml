@@ -29,10 +29,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http: ^0.13.5
-  image_picker: ^0.8.6
   sqflite: ^2.2.4
   path: ^1.8.2
+  http: ^0.13.5
+  image_picker: ^0.8.6
+  smooth_page_indicator: ^1.0.1
 
 
   # The following adds the Cupertino Icons font to your application.

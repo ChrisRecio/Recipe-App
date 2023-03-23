@@ -13,6 +13,7 @@ import '../services/functions/recipe_step_provider.dart';
 import '../services/models/ingredient.dart';
 import '../services/models/recipe.dart';
 import '../services/models/recipe_step.dart';
+import '../widgets/ingredient_measurement_buttons.dart';
 
 class EditRecipe extends StatefulWidget {
   final Recipe recipe;
@@ -33,14 +34,14 @@ class EditRecipeState extends State<EditRecipe> {
   late String _name;
   late int _servings;
   late final _ingredientData; // From DB
-  late String _ingredients; // Names
-  List<String> _ingredientList = []; // Save function
+  List<String> _ingredientList = [];
+  final TextEditingController _ingredientsController = TextEditingController(); // Save function
   late final _stepsData; // From DB
   late String _steps; // Names
   List<String> _stepList = []; // Save function
   late String _description;
-  late int _prepTime;
-  late int _cookTime;
+  late double _prepTime;
+  late double _cookTime;
   static const List<String> timeDuration = <String>['Minutes', 'Hours'];
   late String _prepTimeMeasurement = timeDuration.first;
   late String _cookTimeMeasurement = timeDuration.first;
@@ -71,12 +72,11 @@ class EditRecipeState extends State<EditRecipe> {
     _stepsData = await RecipeStepProvider.getAllRecipeStepsByRecipeId(_id);
 
     setState(() {
-      _ingredients = "";
       for (int i = 0; i < _ingredientData.length; i++) {
         if (i == _ingredientData.length - 1) {
-          _ingredients += _ingredientData[i]["ingredientName"];
+          _ingredientsController.text += _ingredientData[i]["ingredientName"];
         } else {
-          _ingredients += _ingredientData[i]["ingredientName"] + "\n";
+          _ingredientsController.text += _ingredientData[i]["ingredientName"] + "\n";
         }
       }
 
@@ -174,20 +174,26 @@ class EditRecipeState extends State<EditRecipe> {
 
   Widget _buildIngredientsField() => _isLoading
       ? const Center(child: CircularProgressIndicator())
-      : TextFormField(
-          initialValue: _ingredients,
-          decoration: Constants.textFormFieldDecoration('Ingredients'),
-          keyboardType: TextInputType.multiline,
-          maxLines: null,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter at least 1 ingredient';
-            }
-            return null;
-          },
-          onSaved: (value) => setState(() {
-            _ingredientList = ls.convert(value!);
-          }),
+      : Column(
+          children: [
+            ingredientMeasurementButtons(_ingredientsController),
+            TextFormField(
+              // initialValue: _ingredients,
+              controller: _ingredientsController,
+              decoration: Constants.textFormFieldDecoration('Ingredients'),
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter at least 1 ingredient';
+                }
+                return null;
+              },
+              onSaved: (value) => setState(() {
+                _ingredientList = ls.convert(value!);
+              }),
+            ),
+          ],
         );
 
   Widget _buildStepsField() => _isLoading
@@ -226,7 +232,7 @@ class EditRecipeState extends State<EditRecipe> {
           }
           return null;
         },
-        onSaved: (value) => setState(() => _prepTime = int.parse(value!)),
+        onSaved: (value) => setState(() => _prepTime = double.parse(value!)),
       );
 
   Widget _buildCookTimeField() => TextFormField(
@@ -239,7 +245,7 @@ class EditRecipeState extends State<EditRecipe> {
           }
           return null;
         },
-        onSaved: (value) => setState(() => _cookTime = int.parse(value!)),
+        onSaved: (value) => setState(() => _cookTime = double.parse(value!)),
       );
 
   Widget _buildPrepTimeDropDown() => DropdownButton<String>(
@@ -317,7 +323,7 @@ class EditRecipeState extends State<EditRecipe> {
                 _buildNameField(),
                 const SizedBox(height: 16),
                 _buildServingsField(),
-                const SizedBox(height: 16),
+                // const SizedBox(height: 16),
                 _buildIngredientsField(),
                 const SizedBox(height: 16),
                 _buildStepsField(),

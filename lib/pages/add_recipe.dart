@@ -12,6 +12,7 @@ import 'package:recipe_app/services/models/recipe.dart';
 import 'package:recipe_app/services/models/recipe_step.dart';
 
 import '../assets/constants.dart';
+import '../widgets/ingredient_measurement_buttons.dart';
 import '../widgets/nav_drawer.dart';
 
 class AddRecipe extends StatefulWidget {
@@ -29,16 +30,111 @@ class AddRecipeState extends State<AddRecipe> {
   late int _servings;
   late String _description;
   late final int _course = 1;
-  late int _prepTime;
-  late int _cookTime;
+  late double _prepTime;
+  late double _cookTime;
   static const List<String> timeDuration = <String>['Minutes', 'Hours'];
   late String _prepTimeMeasurement = timeDuration.first;
   late String _cookTimeMeasurement = timeDuration.first;
   late List<String> _ingredients;
   late List<String> _steps;
 
+  final TextEditingController _controller = TextEditingController();
   final formKey = GlobalKey<FormState>();
   final LineSplitter ls = const LineSplitter();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Constants.beige,
+      appBar: AppBar(
+        title: const Text('Add Recipe'),
+        backgroundColor: Constants.primaryRed,
+        centerTitle: true,
+      ),
+      drawer: const NavDrawer(),
+      body: Container(
+        margin: const EdgeInsets.all(24),
+        child: Form(
+          key: formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                // ------------------------------------------------ NEED TO DESIGN UI
+                _buildImageField(),
+                const SizedBox(height: 16),
+                _buildNameField(),
+                const SizedBox(height: 16),
+                _buildServingsField(),
+                // const SizedBox(height: 16),
+                _buildIngredientsField(),
+                const SizedBox(height: 16),
+                _buildStepsField(),
+                const SizedBox(height: 16),
+                _buildDescriptionField(),
+                const SizedBox(height: 16),
+                Row(children: <Widget>[Flexible(child: _buildPrepTimeField()), const SizedBox(width: 10), Flexible(child: _buildPrepTimeDropDown())]),
+                const SizedBox(height: 16),
+                Row(children: <Widget>[Flexible(child: _buildCookTimeField()), const SizedBox(width: 10), Flexible(child: _buildCookTimeDropDown())]),
+                const SizedBox(height: 16),
+                MaterialButton(
+                    color: Constants.green,
+                    child: const Text("Submit", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
+                    onPressed: () async {
+                      final isValid = formKey.currentState?.validate();
+
+                      if (isValid == true) {
+                        formKey.currentState?.save();
+
+                        Recipe recipe;
+
+                        if (_image == null) {
+                          recipe = Recipe(
+                              null, _name, null, _servings, _description, _course, _prepTime, _prepTimeMeasurement, _cookTime, _cookTimeMeasurement);
+                        } else {
+                          recipe = Recipe(null, _name, _image?.path, _servings, _description, _course, _prepTime, _prepTimeMeasurement, _cookTime,
+                              _cookTimeMeasurement);
+                        }
+
+                        // Insert Recipe to DB
+                        int recipeId = await RecipeProvider.createRecipe(recipe);
+
+                        RecipeStep step;
+                        Ingredient ingredient;
+
+                        if (recipeId > 0) {
+                          // Insert ingredients
+                          for (int i = 0; i < _ingredients.length; i++) {
+                            ingredient = Ingredient(null, recipeId, _ingredients[i]);
+                            await IngredientProvider.createIngredient(ingredient);
+                          }
+
+                          // Insert steps
+                          for (int i = 0; i < _steps.length; i++) {
+                            step = RecipeStep(null, recipeId, i + 1, _steps[i]);
+                            await RecipeStepProvider.createRecipeStep(step);
+                          }
+                        }
+
+                        final message = '$_name has been saved successfully';
+                        final snackBar = SnackBar(
+                          content: Text(
+                            message,
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                          backgroundColor: Constants.primaryRed,
+                        );
+
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      }
+                    }),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   Future pickImage() async {
     try {
@@ -117,74 +213,11 @@ class AddRecipeState extends State<AddRecipe> {
 
   Widget _buildIngredientsField() => Column(
         children: [
-          Flex(
-            direction: Axis.horizontal,
-            children: [
-              Expanded(
-                child: MaterialButton(
-                  color: Constants.lightBeige,
-                  onPressed: () => {},
-                  child: const Text(
-                    "1/8",
-                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: MaterialButton(
-                  color: Constants.lightBeige,
-                  onPressed: () => {},
-                  child: const Text(
-                    "1/4",
-                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: MaterialButton(
-                  color: Constants.lightBeige,
-                  onPressed: () => {},
-                  child: const Text(
-                    "1/3",
-                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: MaterialButton(
-                  color: Constants.lightBeige,
-                  onPressed: () => {},
-                  child: const Text(
-                    "1/2",
-                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: MaterialButton(
-                  color: Constants.lightBeige,
-                  onPressed: () => {},
-                  child: const Text(
-                    "2/3",
-                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: MaterialButton(
-                  color: Constants.lightBeige,
-                  onPressed: () => {},
-                  child: const Text(
-                    "3/4",
-                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-            ],
-          ),
+          ingredientMeasurementButtons(_controller),
           TextFormField(
             decoration: Constants.textFormFieldDecoration('Ingredients'),
             keyboardType: TextInputType.multiline,
+            controller: _controller,
             maxLines: null,
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -229,7 +262,7 @@ class AddRecipeState extends State<AddRecipe> {
           }
           return null;
         },
-        onSaved: (value) => setState(() => _prepTime = int.parse(value!)),
+        onSaved: (value) => setState(() => _prepTime = double.parse(value!)),
       );
 
   Widget _buildCookTimeField() => TextFormField(
@@ -241,7 +274,7 @@ class AddRecipeState extends State<AddRecipe> {
           }
           return null;
         },
-        onSaved: (value) => setState(() => _cookTime = int.parse(value!)),
+        onSaved: (value) => setState(() => _cookTime = double.parse(value!)),
       );
 
   Widget _buildPrepTimeDropDown() => DropdownButton<String>(
@@ -289,98 +322,4 @@ class AddRecipeState extends State<AddRecipe> {
           );
         }).toList(),
       );
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Constants.beige,
-      appBar: AppBar(
-        title: const Text('Add Recipe'),
-        backgroundColor: Constants.primaryRed,
-        centerTitle: true,
-      ),
-      drawer: const NavDrawer(),
-      body: Container(
-        margin: const EdgeInsets.all(24),
-        child: Form(
-          key: formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                // ------------------------------------------------ NEED TO DESIGN UI
-                _buildImageField(),
-                const SizedBox(height: 16),
-                _buildNameField(),
-                const SizedBox(height: 16),
-                _buildServingsField(),
-                const SizedBox(height: 16),
-                _buildIngredientsField(),
-                const SizedBox(height: 16),
-                _buildStepsField(),
-                const SizedBox(height: 16),
-                _buildDescriptionField(),
-                const SizedBox(height: 16),
-                Row(children: <Widget>[Flexible(child: _buildPrepTimeField()), const SizedBox(width: 10), Flexible(child: _buildPrepTimeDropDown())]),
-                const SizedBox(height: 16),
-                Row(children: <Widget>[Flexible(child: _buildCookTimeField()), const SizedBox(width: 10), Flexible(child: _buildCookTimeDropDown())]),
-                const SizedBox(height: 16),
-                MaterialButton(
-                    color: Constants.green,
-                    child: const Text("Submit", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
-                    onPressed: () async {
-                      final isValid = formKey.currentState?.validate();
-
-                      if (isValid == true) {
-                        formKey.currentState?.save();
-
-                        Recipe recipe;
-
-                        if (_image == null) {
-                          recipe = Recipe(
-                              null, _name, null, _servings, _description, _course, _prepTime, _prepTimeMeasurement, _cookTime, _cookTimeMeasurement);
-                        } else {
-                          recipe = Recipe(null, _name, _image?.path, _servings, _description, _course, _prepTime, _prepTimeMeasurement, _cookTime,
-                              _cookTimeMeasurement);
-                        }
-
-                        // Insert Recipe to DB
-                        int recipeId = await RecipeProvider.createRecipe(recipe);
-
-                        RecipeStep step;
-                        Ingredient ingredient;
-
-                        if (recipeId > 0) {
-                          // Insert ingredients
-                          for (int i = 0; i < _ingredients.length; i++) {
-                            ingredient = Ingredient(null, recipeId, _ingredients[i]);
-                            await IngredientProvider.createIngredient(ingredient);
-                          }
-
-                          // Insert steps
-                          for (int i = 0; i < _steps.length; i++) {
-                            step = RecipeStep(null, recipeId, i + 1, _steps[i]);
-                            await RecipeStepProvider.createRecipeStep(step);
-                          }
-                        }
-
-                        final message = '$_name has been saved successfully';
-                        final snackBar = SnackBar(
-                          content: Text(
-                            message,
-                            style: const TextStyle(fontSize: 20),
-                          ),
-                          backgroundColor: Constants.primaryRed,
-                        );
-
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      }
-                    }),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }

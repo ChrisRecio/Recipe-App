@@ -227,8 +227,8 @@ class ViewRecipeState extends State<ViewRecipe> {
   Widget _buildTimeField() {
     String prepTimeMeasurement = widget.recipe.prepTimeMeasurement;
     String cookTimeMeasurement = widget.recipe.cookTimeMeasurement;
-    int prepTime = widget.recipe.prepTime;
-    int cookTime = widget.recipe.cookTime;
+    double prepTime = widget.recipe.prepTime;
+    double cookTime = widget.recipe.cookTime;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,

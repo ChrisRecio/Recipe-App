@@ -4,7 +4,7 @@ import 'package:recipe_app/services/functions/recipe_provider.dart';
 import '../assets/constants.dart';
 import '../services/functions/recipe_list_search_delegate.dart';
 import '../widgets/nav_drawer.dart';
-import '../widgets/recipeGridView.dart';
+import '../widgets/recipe_grid_view.dart';
 
 class ViewRecipeList extends StatefulWidget {
   const ViewRecipeList({super.key});
