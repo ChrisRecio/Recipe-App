@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 
 class Constants {
   // Trending Recipe API URL
-  // TODO
-  // CHANGE URL TO API ONCE COMPLETED
-  static String apiURL = "https://jsonplaceholder.typicode.com/albums/1";
+  static String apiURL = "http://localhost:5147/api/Recipe/GetRecipeById/1";
+  // static String apiURL = "https://jsonplaceholder.typicode.com/albums/1";
 
   // Color Palette
   static Color primaryRed = const Color.fromARGB(255, 158, 42, 43); // Appbar

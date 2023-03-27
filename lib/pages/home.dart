@@ -23,6 +23,7 @@ class HomeState extends State<HomePage> {
   bool _isLoading = true;
   void _refreshRecipeList() async {
     final data = await RecipeProvider.getNRecipes(_numOfRecipesDisplayed);
+    // await TrendingRecipeProvider.fetchRecipe();
     setState(() {
       _recipeList = data;
       _isLoading = false;

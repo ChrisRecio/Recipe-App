@@ -61,7 +61,7 @@ class RecipeProvider {
     final db = await DbManager.db();
     await db.delete('Recipe', where: "id = ?", whereArgs: [recipeId]);
 
-    final ingredientData = await IngredientProvider.getAllIngredientByRecipeId(recipeId);
+    final ingredientData = await IngredientProvider.getAllIngredientsByRecipeId(recipeId);
     final stepData = await RecipeStepProvider.getAllRecipeStepsByRecipeId(recipeId);
 
     for (int i = 0; i < ingredientData.length; i++) {

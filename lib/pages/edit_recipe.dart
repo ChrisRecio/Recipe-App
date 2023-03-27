@@ -68,7 +68,7 @@ class EditRecipeState extends State<EditRecipe> {
     _prepTimeMeasurement = widget.recipe.prepTimeMeasurement;
     _cookTime = widget.recipe.cookTime;
     _cookTimeMeasurement = widget.recipe.cookTimeMeasurement;
-    _ingredientData = await IngredientProvider.getAllIngredientByRecipeId(_id);
+    _ingredientData = await IngredientProvider.getAllIngredientsByRecipeId(_id);
     _stepsData = await RecipeStepProvider.getAllRecipeStepsByRecipeId(_id);
 
     setState(() {

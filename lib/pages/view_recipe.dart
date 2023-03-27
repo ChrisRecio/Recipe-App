@@ -32,7 +32,7 @@ class ViewRecipeState extends State<ViewRecipe> {
 
   bool _isLoading = true;
   void _refreshLists() async {
-    final ingredientData = await IngredientProvider.getAllIngredientByRecipeId(widget.recipe.id!);
+    final ingredientData = await IngredientProvider.getAllIngredientsByRecipeId(widget.recipe.id!);
     final stepData = await RecipeStepProvider.getAllRecipeStepsByRecipeId(widget.recipe.id!);
     setState(() {
       _ingredientList = ingredientData;
