@@ -12,12 +12,32 @@ class Recipe {
   double _cookTime;
   String _cookTimeMeasurement;
 
-  Recipe(this._id, this._name, this._image, this._servings, this._description, this._course, this._prepTime, this._prepTimeMeasurement,
-      this._cookTime, this._cookTimeMeasurement);
+  Recipe(
+      this._id,
+      this._name,
+      this._image,
+      this._servings,
+      this._description,
+      this._course,
+      this._prepTime,
+      this._prepTimeMeasurement,
+      this._cookTime,
+      this._cookTimeMeasurement);
 
   factory Recipe.fromMap(Map<String, dynamic> data) {
-    return Recipe(data['id'], data['name'], data['image'], data['servings'], data['description'], data['courseId'], data['prepTime'],
-        data['prepTimeMeasurement'], data['cookTime'], data['cookTimeMeasurement']);
+    Recipe recipe = Recipe(
+        data['id'],
+        data['name'],
+        data['image'],
+        data['servings'],
+        data['description'],
+        data['courseId'],
+        data['prepTime'],
+        data['prepTimeMeasurement'],
+        data['cookTime'],
+        data['cookTimeMeasurement']);
+
+    return recipe;
   }
 
   static List<Recipe> parseRecipeList(List<dynamic> list) {
