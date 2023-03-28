@@ -71,25 +71,27 @@ class EditRecipeState extends State<EditRecipe> {
     _ingredientData = await IngredientProvider.getAllIngredientsByRecipeId(_id);
     _stepsData = await RecipeStepProvider.getAllRecipeStepsByRecipeId(_id);
 
-    setState(() {
-      for (int i = 0; i < _ingredientData.length; i++) {
-        if (i == _ingredientData.length - 1) {
-          _ingredientsController.text += _ingredientData[i]["ingredientName"];
-        } else {
-          _ingredientsController.text += _ingredientData[i]["ingredientName"] + "\n";
+    setState(
+      () {
+        for (int i = 0; i < _ingredientData.length; i++) {
+          if (i == _ingredientData.length - 1) {
+            _ingredientsController.text += _ingredientData[i]["ingredientName"];
+          } else {
+            _ingredientsController.text += _ingredientData[i]["ingredientName"] + "\n";
+          }
         }
-      }
 
-      _steps = "";
-      for (int i = 0; i < _stepsData.length; i++) {
-        if (i == _stepsData.length - 1) {
-          _steps += "${_stepsData[i]["stepDescription"]}";
-        } else {
-          _steps += "${_stepsData[i]["stepDescription"]}\n";
+        _steps = "";
+        for (int i = 0; i < _stepsData.length; i++) {
+          if (i == _stepsData.length - 1) {
+            _steps += "${_stepsData[i]["stepDescription"]}";
+          } else {
+            _steps += "${_stepsData[i]["stepDescription"]}\n";
+          }
         }
-      }
-      _isLoading = false;
-    });
+        _isLoading = false;
+      },
+    );
   }
 
   // Pick image from gallery
@@ -135,11 +137,12 @@ class EditRecipeState extends State<EditRecipe> {
               pickImage();
             }),
         MaterialButton(
-            color: Constants.blue,
-            child: const Text("Pick Image from Camera", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
-            onPressed: () {
-              pickImageCamera();
-            }),
+          color: Constants.blue,
+          child: const Text("Pick Image from Camera", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
+          onPressed: () {
+            pickImageCamera();
+          },
+        ),
         const SizedBox(
           height: 20,
         ),
@@ -189,9 +192,11 @@ class EditRecipeState extends State<EditRecipe> {
                 }
                 return null;
               },
-              onSaved: (value) => setState(() {
-                _ingredientList = ls.convert(value!);
-              }),
+              onSaved: (value) => setState(
+                () {
+                  _ingredientList = ls.convert(value!);
+                },
+              ),
             ),
           ],
         );
@@ -209,9 +214,11 @@ class EditRecipeState extends State<EditRecipe> {
             }
             return null;
           },
-          onSaved: (value) => setState(() {
-            _stepList = ls.convert(value!);
-          }),
+          onSaved: (value) => setState(
+            () {
+              _stepList = ls.convert(value!);
+            },
+          ),
         );
 
   Widget _buildDescriptionField() => TextFormField(
@@ -225,7 +232,7 @@ class EditRecipeState extends State<EditRecipe> {
   Widget _buildPrepTimeField() => TextFormField(
         initialValue: _prepTime.toString(),
         decoration: Constants.textFormFieldDecorationWithIcon('Prep Time', const Icon(Icons.access_time)),
-        keyboardType: TextInputType.number,
+        keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: false),
         validator: (value) {
           if (value == null || value.isEmpty || int.parse(value) <= 0) {
             return 'Prep Time cannot be negative';
@@ -238,7 +245,7 @@ class EditRecipeState extends State<EditRecipe> {
   Widget _buildCookTimeField() => TextFormField(
         initialValue: _cookTime.toString(),
         decoration: Constants.textFormFieldDecorationWithIcon('Cook Time', const Icon(Icons.access_time)),
-        keyboardType: TextInputType.number,
+        keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: false),
         validator: (value) {
           if (value == null || value.isEmpty || int.parse(value) < 0) {
             return 'Cook Time cannot be negative';
@@ -259,16 +266,20 @@ class EditRecipeState extends State<EditRecipe> {
         ),
         onChanged: (String? value) {
           // This is called when the user selects an item.
-          setState(() {
-            _prepTimeMeasurement = value!;
-          });
-        },
-        items: timeDuration.map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
+          setState(
+            () {
+              _prepTimeMeasurement = value!;
+            },
           );
-        }).toList(),
+        },
+        items: timeDuration.map<DropdownMenuItem<String>>(
+          (String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          },
+        ).toList(),
       );
 
   Widget _buildCookTimeDropDown() => DropdownButton<String>(

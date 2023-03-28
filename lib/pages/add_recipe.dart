@@ -79,7 +79,7 @@ class AddRecipeState extends State<AddRecipe> {
                 const SizedBox(height: 16),
                 MaterialButton(
                     color: Constants.green,
-                    child: const Text("Submit", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
+                    child: Text("Submit", style: TextStyle(color: Constants.white, fontWeight: FontWeight.bold)),
                     onPressed: () async {
                       final isValid = formKey.currentState?.validate();
 
@@ -255,9 +255,9 @@ class AddRecipeState extends State<AddRecipe> {
       );
   Widget _buildPrepTimeField() => TextFormField(
         decoration: Constants.textFormFieldDecorationWithIcon('Prep Time', const Icon(Icons.access_time)),
-        keyboardType: TextInputType.number,
+        keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: false),
         validator: (value) {
-          if (value == null || value.isEmpty || int.parse(value) <= 0) {
+          if (value == null || value.isEmpty || double.parse(value) <= 0) {
             return 'Prep Time cannot be negative';
           }
           return null;
@@ -267,9 +267,9 @@ class AddRecipeState extends State<AddRecipe> {
 
   Widget _buildCookTimeField() => TextFormField(
         decoration: Constants.textFormFieldDecorationWithIcon('Cook Time', const Icon(Icons.access_time)),
-        keyboardType: TextInputType.number,
+        keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: false),
         validator: (value) {
-          if (value == null || value.isEmpty || int.parse(value) < 0) {
+          if (value == null || value.isEmpty || double.parse(value) < 0) {
             return 'Cook Time cannot be negative';
           }
           return null;

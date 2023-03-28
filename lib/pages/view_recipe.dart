@@ -32,10 +32,8 @@ class ViewRecipeState extends State<ViewRecipe> {
 
   bool _isLoading = true;
   void _refreshLists() async {
-    final ingredientData =
-        await IngredientProvider.getAllIngredientsByRecipeId(widget.recipe.id!);
-    final stepData =
-        await RecipeStepProvider.getAllRecipeStepsByRecipeId(widget.recipe.id!);
+    final ingredientData = await IngredientProvider.getAllIngredientsByRecipeId(widget.recipe.id!);
+    final stepData = await RecipeStepProvider.getAllRecipeStepsByRecipeId(widget.recipe.id!);
     setState(() {
       _ingredientList = ingredientData;
       _stepList = stepData;
@@ -100,10 +98,7 @@ class ViewRecipeState extends State<ViewRecipe> {
       child: const Text("Confirm"),
       onPressed: () {
         deleteRecipe();
-        Navigator.of(context)
-            .push(
-                MaterialPageRoute(builder: (context) => const ViewRecipeList()))
-            .whenComplete(initState);
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ViewRecipeList())).whenComplete(initState);
       },
     );
 
@@ -181,8 +176,7 @@ class ViewRecipeState extends State<ViewRecipe> {
                       child: Container(
                         height: 20,
                         width: MediaQuery.of(context).size.width,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 30, vertical: 0),
+                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 0),
                         decoration: BoxDecoration(
                           color: Constants.beige,
                           borderRadius: const BorderRadius.only(
@@ -230,7 +224,7 @@ class ViewRecipeState extends State<ViewRecipe> {
     ]);
   }
 
-/*  Widget _buildTimeField() {
+  Widget _buildTimeField() {
     String prepTimeMeasurement = widget.recipe.prepTimeMeasurement;
     String cookTimeMeasurement = widget.recipe.cookTimeMeasurement;
     double prepTime = widget.recipe.prepTime;
@@ -248,7 +242,7 @@ class ViewRecipeState extends State<ViewRecipe> {
         Text("Cook time: $cookTime $cookTimeMeasurement"),
       ],
     );
-  }*/
+  }
 
   Widget _buildDescriptionField() {
     String description = widget.recipe.description;
@@ -273,12 +267,13 @@ class ViewRecipeState extends State<ViewRecipe> {
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemBuilder: (context, index) => Card(
-                    color: Constants.secondaryRed,
-                    margin: const EdgeInsets.all(15),
-                    child: ListTile(
-                      title:
-                          Text('- ${_ingredientList[index]['ingredientName']}'),
-                    ))),
+                  color: Constants.secondaryRed,
+                  margin: const EdgeInsets.all(15),
+                  child: ListTile(
+                    title: Text('- ${_ingredientList[index]['ingredientName']}'),
+                  ),
+                ),
+              ),
       ],
     );
   }
@@ -294,12 +289,13 @@ class ViewRecipeState extends State<ViewRecipe> {
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemBuilder: (context, index) => Card(
-                    color: Constants.secondaryRed,
-                    margin: const EdgeInsets.all(15),
-                    child: ListTile(
-                      title: Text(
-                          '${_stepList[index]['stepNumber']}. ${_stepList[index]['stepDescription']}'),
-                    ))),
+                  color: Constants.secondaryRed,
+                  margin: const EdgeInsets.all(15),
+                  child: ListTile(
+                    title: Text('${_stepList[index]['stepNumber']}. ${_stepList[index]['stepDescription']}'),
+                  ),
+                ),
+              ),
       ],
     );
   }
@@ -318,7 +314,7 @@ class ViewRecipeState extends State<ViewRecipe> {
               const SizedBox(height: 16),
               _buildServingField(),
               const SizedBox(height: 16),
-              // _buildTimeField(),
+              _buildTimeField(),
               const SizedBox(height: 16),
               _buildDescriptionField(),
               const SizedBox(height: 16),
