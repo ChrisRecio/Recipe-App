@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:recipe_app/services/functions/shopping_list_provider.dart';
 import 'package:recipe_app/services/models/shopping_list.dart';
 
 import '../assets/constants.dart';
@@ -14,25 +15,27 @@ class ShoppingList extends StatefulWidget {
 }
 
 class ShoppingListState extends State<ShoppingList> {
-  // List<Map<String, dynamic>> _shoppingList = [];
-  final List<ShoppingListItem> _shoppingList = [
-    ShoppingListItem(1, "Cheese", false),
-    ShoppingListItem(2, "Bread", true),
-    ShoppingListItem(3, "Peanut Butter", false),
-    ShoppingListItem(4, "Jam", false),
-    ShoppingListItem(5, "Butter", false),
-    ShoppingListItem(6, "Cheese", false),
-    ShoppingListItem(7, "Bread", false),
-    ShoppingListItem(8, "Peanut Butter", false),
-    ShoppingListItem(9, "Jam", false),
-    ShoppingListItem(10, "Butter", false),
+  List<Map<String, dynamic>> _shoppingList = [];
+  final List<ShoppingListItem> _staticShoppingList = [
+    ShoppingListItem(1, "1", "Cheese", false),
+    ShoppingListItem(2, "1", "Bread", true),
+    ShoppingListItem(3, "1", "Peanut Butter", false),
+    ShoppingListItem(4, "1", "Jam", false),
+    ShoppingListItem(5, "1", "Butter", false),
+    ShoppingListItem(6, "1", "Cheese", false),
+    ShoppingListItem(7, "1", "Bread", false),
+    ShoppingListItem(8, "1", "Peanut Butter", false),
+    ShoppingListItem(9, "1", "Jam", false),
+    ShoppingListItem(10, "1", "Butter", false),
   ];
 
   List<ShoppingListItem> _selectedIngredients = [];
 
   bool _isLoading = true;
   void _refreshShoppingList() async {
+    final data = await ShoppingListProvider.getAllShoppingListItem();
     setState(() {
+      _shoppingList = data;
       _isLoading = false;
     });
   }
@@ -67,9 +70,10 @@ class ShoppingListState extends State<ShoppingList> {
               itemCount: _shoppingList.length,
               itemBuilder: (context, index) {
                 return ingredientItem(
-                  _shoppingList[index].id!,
-                  _shoppingList[index].ingredient,
-                  _shoppingList[index].checked,
+                  _shoppingList[index]['id'],
+                  _shoppingList[index]['quantity'],
+                  _shoppingList[index]['ingredientName'],
+                  _shoppingList[index]['checked'],
                   index,
                 );
               },
@@ -107,17 +111,17 @@ class ShoppingListState extends State<ShoppingList> {
     );
   }
 
-  Widget ingredientItem(int id, String ingredient, bool checked, int index) {
+  Widget ingredientItem(int id, String quantity, String ingredient, int checked, int index) {
     return ListTile(
       title: Text(
         ingredient,
-        style: checked
+        style: checked == 1
             ? const TextStyle(fontWeight: FontWeight.w500, decoration: TextDecoration.lineThrough)
             : const TextStyle(
                 fontWeight: FontWeight.w500,
               ),
       ),
-      trailing: checked
+      trailing: checked == 1
           ? Icon(
               Icons.check_circle,
               color: Constants.green,
@@ -129,11 +133,19 @@ class ShoppingListState extends State<ShoppingList> {
       onTap: () {
         setState(
           () {
-            _shoppingList[index].checked = !_shoppingList[index].checked;
-            if (_shoppingList[index].checked == true) {
-              _selectedIngredients.add(ShoppingListItem(id, ingredient, true));
-            } else if (_shoppingList[index].checked == false) {
-              _selectedIngredients.removeWhere((element) => element.ingredient == _shoppingList[index].ingredient);
+            // Convert 1/0 to T/F
+            bool check = _shoppingList[index]['checked'] == 1 ? true : false;
+
+            // Update item in db
+            ShoppingListItem item =
+                ShoppingListItem(_shoppingList[index]['id'], _shoppingList[index]['quantity'], _shoppingList[index]['ingredientName'], !check);
+            ShoppingListProvider.updateShoppingListItem(item);
+
+            // Set _selectedIngredients
+            if (!check == true) {
+              _selectedIngredients.add(ShoppingListItem(id, quantity, ingredient, true));
+            } else if (!check == false) {
+              _selectedIngredients.removeWhere((element) => element.ingredient == _shoppingList[index]['checked']);
             }
           },
         );
