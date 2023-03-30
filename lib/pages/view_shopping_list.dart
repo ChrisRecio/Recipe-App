@@ -48,6 +48,7 @@ class ShoppingListState extends State<ShoppingList> {
 
   @override
   Widget build(BuildContext context) {
+    _refreshShoppingList();
     return Scaffold(
       backgroundColor: Constants.beige,
       appBar: AppBar(
@@ -100,7 +101,8 @@ class ShoppingListState extends State<ShoppingList> {
                         ),
                       ),
                       onPressed: () {
-                        print("Delete List Lenght: ${_selectedIngredients.length}");
+                        print(
+                            "Delete List Lenght: ${_selectedIngredients.length}");
                       },
                     ),
                   ),
@@ -111,12 +113,15 @@ class ShoppingListState extends State<ShoppingList> {
     );
   }
 
-  Widget ingredientItem(int id, String quantity, String ingredient, int checked, int index) {
+  Widget ingredientItem(
+      int id, String quantity, String ingredient, int checked, int index) {
     return ListTile(
       title: Text(
         ingredient,
         style: checked == 1
-            ? const TextStyle(fontWeight: FontWeight.w500, decoration: TextDecoration.lineThrough)
+            ? const TextStyle(
+                fontWeight: FontWeight.w500,
+                decoration: TextDecoration.lineThrough)
             : const TextStyle(
                 fontWeight: FontWeight.w500,
               ),
@@ -137,15 +142,20 @@ class ShoppingListState extends State<ShoppingList> {
             bool check = _shoppingList[index]['checked'] == 1 ? true : false;
 
             // Update item in db
-            ShoppingListItem item =
-                ShoppingListItem(_shoppingList[index]['id'], _shoppingList[index]['quantity'], _shoppingList[index]['ingredientName'], !check);
+            ShoppingListItem item = ShoppingListItem(
+                _shoppingList[index]['id'],
+                _shoppingList[index]['quantity'],
+                _shoppingList[index]['ingredientName'],
+                !check);
             ShoppingListProvider.updateShoppingListItem(item);
 
             // Set _selectedIngredients
             if (!check == true) {
-              _selectedIngredients.add(ShoppingListItem(id, quantity, ingredient, true));
+              _selectedIngredients
+                  .add(ShoppingListItem(id, quantity, ingredient, true));
             } else if (!check == false) {
-              _selectedIngredients.removeWhere((element) => element.ingredient == _shoppingList[index]['checked']);
+              _selectedIngredients.removeWhere((element) =>
+                  element.ingredientName == _shoppingList[index]['checked']);
             }
           },
         );

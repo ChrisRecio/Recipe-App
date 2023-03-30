@@ -27,14 +27,19 @@ class ViewRecipe extends StatefulWidget {
 }
 
 class ViewRecipeState extends State<ViewRecipe> {
+  List<Map<String, dynamic>> _recipe = [];
   List<Map<String, dynamic>> _ingredientList = [];
   List<Map<String, dynamic>> _stepList = [];
 
   bool _isLoading = true;
   void _refreshLists() async {
-    final ingredientData = await IngredientProvider.getAllIngredientsByRecipeId(widget.recipe.id!);
-    final stepData = await RecipeStepProvider.getAllRecipeStepsByRecipeId(widget.recipe.id!);
+    final recipeData = await RecipeProvider.getRecipeById(widget.recipe.id!);
+    final ingredientData =
+        await IngredientProvider.getAllIngredientsByRecipeId(widget.recipe.id!);
+    final stepData =
+        await RecipeStepProvider.getAllRecipeStepsByRecipeId(widget.recipe.id!);
     setState(() {
+      _recipe = recipeData;
       _ingredientList = ingredientData;
       _stepList = stepData;
       _isLoading = false;
@@ -98,14 +103,18 @@ class ViewRecipeState extends State<ViewRecipe> {
       child: const Text("Confirm"),
       onPressed: () {
         deleteRecipe();
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ViewRecipeList())).whenComplete(initState);
+        Navigator.of(context)
+            .push(
+                MaterialPageRoute(builder: (context) => const ViewRecipeList()))
+            .whenComplete(initState);
       },
     );
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
       title: const Text("Delete Recipe"),
-      content: Text("Are you sure you want to delete ${widget.recipe.name}?"),
+      content:
+          Text("Are you sure you want to delete ${_recipe.first['name']}?"),
       actions: [
         cancelButton,
         continueButton,
@@ -176,7 +185,8 @@ class ViewRecipeState extends State<ViewRecipe> {
                       child: Container(
                         height: 20,
                         width: MediaQuery.of(context).size.width,
-                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 0),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 30, vertical: 0),
                         decoration: BoxDecoration(
                           color: Constants.beige,
                           borderRadius: const BorderRadius.only(
@@ -270,7 +280,8 @@ class ViewRecipeState extends State<ViewRecipe> {
                   color: Constants.secondaryRed,
                   margin: const EdgeInsets.all(15),
                   child: ListTile(
-                    title: Text('- ${_ingredientList[index]['ingredientName']}'),
+                    title:
+                        Text('- ${_ingredientList[index]['ingredientName']}'),
                   ),
                 ),
               ),
@@ -292,7 +303,8 @@ class ViewRecipeState extends State<ViewRecipe> {
                   color: Constants.secondaryRed,
                   margin: const EdgeInsets.all(15),
                   child: ListTile(
-                    title: Text('${_stepList[index]['stepNumber']}. ${_stepList[index]['stepDescription']}'),
+                    title: Text(
+                        '${_stepList[index]['stepNumber']}. ${_stepList[index]['stepDescription']}'),
                   ),
                 ),
               ),
@@ -302,6 +314,7 @@ class ViewRecipeState extends State<ViewRecipe> {
 
   @override
   Widget build(BuildContext context) {
+    _refreshLists();
     return Scaffold(
         backgroundColor: Constants.beige,
         extendBodyBehindAppBar: true,

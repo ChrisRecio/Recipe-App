@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:recipe_app/pages/view_recipe_list.dart';
 
 import '../assets/constants.dart';
 import '../services/functions/ingredient_provider.dart';
@@ -35,7 +34,8 @@ class EditRecipeState extends State<EditRecipe> {
   late int _servings;
   late final _ingredientData; // From DB
   List<String> _ingredientList = [];
-  final TextEditingController _ingredientsController = TextEditingController(); // Save function
+  final TextEditingController _ingredientsController =
+      TextEditingController(); // Save function
   late final _stepsData; // From DB
   late String _steps; // Names
   List<String> _stepList = []; // Save function
@@ -77,7 +77,8 @@ class EditRecipeState extends State<EditRecipe> {
           if (i == _ingredientData.length - 1) {
             _ingredientsController.text += _ingredientData[i]["ingredientName"];
           } else {
-            _ingredientsController.text += _ingredientData[i]["ingredientName"] + "\n";
+            _ingredientsController.text +=
+                _ingredientData[i]["ingredientName"] + "\n";
           }
         }
 
@@ -132,13 +133,17 @@ class EditRecipeState extends State<EditRecipe> {
         const SizedBox(height: 5),
         MaterialButton(
             color: Constants.blue,
-            child: const Text("Pick Image from Gallery", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
+            child: const Text("Pick Image from Gallery",
+                style: TextStyle(
+                    color: Colors.white70, fontWeight: FontWeight.bold)),
             onPressed: () {
               pickImage();
             }),
         MaterialButton(
           color: Constants.blue,
-          child: const Text("Pick Image from Camera", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
+          child: const Text("Pick Image from Camera",
+              style: TextStyle(
+                  color: Colors.white70, fontWeight: FontWeight.bold)),
           onPressed: () {
             pickImageCamera();
           },
@@ -231,10 +236,12 @@ class EditRecipeState extends State<EditRecipe> {
 
   Widget _buildPrepTimeField() => TextFormField(
         initialValue: _prepTime.toString(),
-        decoration: Constants.textFormFieldDecorationWithIcon('Prep Time', const Icon(Icons.access_time)),
-        keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: false),
+        decoration: Constants.textFormFieldDecorationWithIcon(
+            'Prep Time', const Icon(Icons.access_time)),
+        keyboardType:
+            const TextInputType.numberWithOptions(decimal: true, signed: false),
         validator: (value) {
-          if (value == null || value.isEmpty || int.parse(value) <= 0) {
+          if (value == null || value.isEmpty || double.parse(value) <= 0) {
             return 'Prep Time cannot be negative';
           }
           return null;
@@ -244,10 +251,12 @@ class EditRecipeState extends State<EditRecipe> {
 
   Widget _buildCookTimeField() => TextFormField(
         initialValue: _cookTime.toString(),
-        decoration: Constants.textFormFieldDecorationWithIcon('Cook Time', const Icon(Icons.access_time)),
-        keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: false),
+        decoration: Constants.textFormFieldDecorationWithIcon(
+            'Cook Time', const Icon(Icons.access_time)),
+        keyboardType:
+            const TextInputType.numberWithOptions(decimal: true, signed: false),
         validator: (value) {
-          if (value == null || value.isEmpty || int.parse(value) < 0) {
+          if (value == null || value.isEmpty || double.parse(value) < 0) {
             return 'Cook Time cannot be negative';
           }
           return null;
@@ -314,8 +323,10 @@ class EditRecipeState extends State<EditRecipe> {
             icon: const Icon(Icons.arrow_back, color: Colors.white),
             // Routing acts strange when swiping back on physical device
             // Must fix
-            onPressed: () => Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const ViewRecipeList()),
-                (route) => route.isFirst), /*Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ViewRecipeList()))*/
+            onPressed: () => Navigator.of(context)
+                .pop() /*Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const ViewRecipeList()),
+                (route) => route.isFirst)*/
+            , /*Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ViewRecipeList()))*/
           ),
           title: Text('Edit $_name'),
           centerTitle: true,
@@ -341,13 +352,24 @@ class EditRecipeState extends State<EditRecipe> {
                 const SizedBox(height: 16),
                 _buildDescriptionField(),
                 const SizedBox(height: 16),
-                Row(children: <Widget>[Flexible(child: _buildPrepTimeField()), const SizedBox(width: 10), Flexible(child: _buildPrepTimeDropDown())]),
+                Row(children: <Widget>[
+                  Flexible(child: _buildPrepTimeField()),
+                  const SizedBox(width: 10),
+                  Flexible(child: _buildPrepTimeDropDown())
+                ]),
                 const SizedBox(height: 16),
-                Row(children: <Widget>[Flexible(child: _buildCookTimeField()), const SizedBox(width: 10), Flexible(child: _buildCookTimeDropDown())]),
+                Row(children: <Widget>[
+                  Flexible(child: _buildCookTimeField()),
+                  const SizedBox(width: 10),
+                  Flexible(child: _buildCookTimeDropDown())
+                ]),
                 const SizedBox(height: 16),
                 MaterialButton(
                     color: Constants.green,
-                    child: const Text("Submit", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
+                    child: const Text("Submit",
+                        style: TextStyle(
+                            color: Colors.white70,
+                            fontWeight: FontWeight.bold)),
                     onPressed: () async {
                       final isValid = formKey.currentState?.validate();
 
@@ -357,11 +379,29 @@ class EditRecipeState extends State<EditRecipe> {
                         Recipe recipe;
 
                         if (_image == null) {
-                          recipe =
-                              Recipe(_id, _name, null, _servings, _description, 1, _prepTime, _prepTimeMeasurement, _cookTime, _cookTimeMeasurement);
+                          recipe = Recipe(
+                              _id,
+                              _name,
+                              null,
+                              _servings,
+                              _description,
+                              1,
+                              _prepTime,
+                              _prepTimeMeasurement,
+                              _cookTime,
+                              _cookTimeMeasurement);
                         } else {
                           recipe = Recipe(
-                              _id, _name, _image?.path, _servings, _description, 1, _prepTime, _prepTimeMeasurement, _cookTime, _cookTimeMeasurement);
+                              _id,
+                              _name,
+                              _image?.path,
+                              _servings,
+                              _description,
+                              1,
+                              _prepTime,
+                              _prepTimeMeasurement,
+                              _cookTime,
+                              _cookTimeMeasurement);
                         }
 
                         // Update Recipe
@@ -377,10 +417,15 @@ class EditRecipeState extends State<EditRecipe> {
                           //same # of ingredients => update each entry
 
                           for (int i = 0; i < _ingredientList.length; i++) {
-                            ingredient = Ingredient(_ingredientData[i]['id'], _ingredientData[i]['recipeId'], _ingredientList[i]);
-                            await IngredientProvider.updateIngredient(ingredient);
+                            ingredient = Ingredient(
+                                _ingredientData[i]['id'],
+                                _ingredientData[i]['recipeId'],
+                                _ingredientList[i]);
+                            await IngredientProvider.updateIngredient(
+                                ingredient);
                           }
-                        } else if (_ingredientList.length > _ingredientData.length) {
+                        } else if (_ingredientList.length >
+                            _ingredientData.length) {
                           // larger # of ingredients => update each entry + create new entry
 
                           int itemsInDb = _ingredientData.length;
@@ -388,15 +433,24 @@ class EditRecipeState extends State<EditRecipe> {
                           for (int i = 0; i < _ingredientList.length; i++) {
                             if (i < itemsInDb) {
                               // Update existing ingredients
-                              ingredient = Ingredient(_ingredientData[i]['id'], _ingredientData[i]['recipeId'], _ingredientList[i]);
-                              await IngredientProvider.updateIngredient(ingredient);
+                              ingredient = Ingredient(
+                                  _ingredientData[i]['id'],
+                                  _ingredientData[i]['recipeId'],
+                                  _ingredientList[i]);
+                              await IngredientProvider.updateIngredient(
+                                  ingredient);
                             } else if (i >= itemsInDb) {
                               // Create new ingredient
-                              ingredient = Ingredient(null, _ingredientData[0]['recipeId'], _ingredientList[i]);
-                              await IngredientProvider.createIngredient(ingredient);
+                              ingredient = Ingredient(
+                                  null,
+                                  _ingredientData[0]['recipeId'],
+                                  _ingredientList[i]);
+                              await IngredientProvider.createIngredient(
+                                  ingredient);
                             }
                           }
-                        } else if (_ingredientList.length < _ingredientData.length) {
+                        } else if (_ingredientList.length <
+                            _ingredientData.length) {
                           // if lower # of ingredients => update each entry + delete extras
 
                           int itemsInInput = _ingredientList.length;
@@ -404,16 +458,22 @@ class EditRecipeState extends State<EditRecipe> {
                           for (int i = 0; i < _ingredientData.length; i++) {
                             if (i < itemsInInput) {
                               // Update existing ingredients
-                              ingredient = Ingredient(_ingredientData[i]['id'], _ingredientData[i]['recipeId'], _ingredientList[i]);
-                              await IngredientProvider.updateIngredient(ingredient);
+                              ingredient = Ingredient(
+                                  _ingredientData[i]['id'],
+                                  _ingredientData[i]['recipeId'],
+                                  _ingredientList[i]);
+                              await IngredientProvider.updateIngredient(
+                                  ingredient);
                             } else if (i >= itemsInInput) {
                               // Delete ingredient if greater than # in input
-                              await IngredientProvider.deleteIngredient(_ingredientData[i]['id']);
+                              await IngredientProvider.deleteIngredient(
+                                  _ingredientData[i]['id']);
                             }
                           }
                         } else {
                           // probably add a better error message
-                          print("if you're here then you win\nnot sure what to tell you");
+                          print(
+                              "if you're here then you win\nnot sure what to tell you");
                         }
 
                         // UPDATE RECIPE STEPS
@@ -423,7 +483,8 @@ class EditRecipeState extends State<EditRecipe> {
                           //same # of steps => update each entry
 
                           for (int i = 0; i < _stepList.length; i++) {
-                            step = RecipeStep(_stepsData[i]['id'], _stepsData[i]['recipeId'], i + 1, _stepList[i]);
+                            step = RecipeStep(_stepsData[i]['id'],
+                                _stepsData[i]['recipeId'], i + 1, _stepList[i]);
                             await RecipeStepProvider.updateRecipeStep(step);
                           }
                         } else if (_stepList.length > _stepsData.length) {
@@ -434,11 +495,16 @@ class EditRecipeState extends State<EditRecipe> {
                           for (int i = 0; i < _stepList.length; i++) {
                             if (i < itemsInDb) {
                               // Update existing ingredients
-                              step = RecipeStep(_stepsData[i]['id'], _stepsData[i]['recipeId'], i + 1, _stepList[i]);
+                              step = RecipeStep(
+                                  _stepsData[i]['id'],
+                                  _stepsData[i]['recipeId'],
+                                  i + 1,
+                                  _stepList[i]);
                               await RecipeStepProvider.updateRecipeStep(step);
                             } else if (i >= itemsInDb) {
                               // Create new ingredient
-                              step = RecipeStep(null, _stepsData[0]['recipeId'], i + 1, _stepList[i]);
+                              step = RecipeStep(null, _stepsData[0]['recipeId'],
+                                  i + 1, _stepList[i]);
                               await RecipeStepProvider.createRecipeStep(step);
                             }
                           }
@@ -450,16 +516,22 @@ class EditRecipeState extends State<EditRecipe> {
                           for (int i = 0; i < _ingredientData.length; i++) {
                             if (i < itemsInInput) {
                               // Update existing ingredients
-                              step = RecipeStep(_stepsData[i]['id'], _stepsData[i]['recipeId'], i + 1, _stepList[i]);
+                              step = RecipeStep(
+                                  _stepsData[i]['id'],
+                                  _stepsData[i]['recipeId'],
+                                  i + 1,
+                                  _stepList[i]);
                               await RecipeStepProvider.updateRecipeStep(step);
                             } else if (i >= itemsInInput) {
                               // Delete ingredient if greater than # in input
-                              await IngredientProvider.deleteIngredient(_stepsData[i]['id']);
+                              await IngredientProvider.deleteIngredient(
+                                  _stepsData[i]['id']);
                             }
                           }
                         } else {
                           // probably add a better error message
-                          print("if you're here then you win\nnot sure what to tell you");
+                          print(
+                              "if you're here then you win\nnot sure what to tell you");
                         }
 
                         final message = '$_name has been updated';

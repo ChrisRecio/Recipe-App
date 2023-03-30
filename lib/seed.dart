@@ -9,7 +9,8 @@ import 'package:recipe_app/services/models/shopping_list.dart';
 
 class Seed {
   static Future<void> seedData() async {
-    Recipe grilledCheese = Recipe(null, "Grilled Cheese", null, 1, "A grilled cheese sandwich", 1, 5, "minutes", 5, "minutes");
+    Recipe grilledCheese = Recipe(null, "Grilled Cheese", null, 1,
+        "A grilled cheese sandwich", 1, 5, "Minutes", 5, "Minutes");
     int recipeId = await RecipeProvider.createRecipe(grilledCheese);
 
     Ingredient ingredient = Ingredient(null, recipeId, "Bread");
@@ -19,14 +20,17 @@ class Seed {
     ingredient = Ingredient(null, recipeId, "Butter");
     await IngredientProvider.createIngredient(ingredient);
 
-    RecipeStep step = RecipeStep(null, recipeId, 1, "Spread butter on the outside of the bread");
+    RecipeStep step = RecipeStep(
+        null, recipeId, 1, "Spread butter on the outside of the bread");
     await RecipeStepProvider.createRecipeStep(step);
-    step = RecipeStep(null, recipeId, 2, "Place cheese between both slices of bread");
+    step = RecipeStep(
+        null, recipeId, 2, "Place cheese between both slices of bread");
     await RecipeStepProvider.createRecipeStep(step);
     step = RecipeStep(null, recipeId, 3, "Toast until golden brown");
     await RecipeStepProvider.createRecipeStep(step);
 
-    Recipe pbj = Recipe(null, "Peanut butter jelly sandwich", null, 1, "A Peanut butter jelly sandwich", 1, 5, "minutes", 5, "minutes");
+    Recipe pbj = Recipe(null, "Peanut butter jelly sandwich", null, 1,
+        "A Peanut butter jelly sandwich", 1, 5, "Minutes", 5, "Minutes");
     recipeId = await RecipeProvider.createRecipe(pbj);
 
     ingredient = Ingredient(null, recipeId, "Bread");
@@ -36,14 +40,17 @@ class Seed {
     ingredient = Ingredient(null, recipeId, "Jam");
     await IngredientProvider.createIngredient(ingredient);
 
-    step = RecipeStep(null, recipeId, 1, "Spread peanut butter on one slice of bread");
+    step = RecipeStep(
+        null, recipeId, 1, "Spread peanut butter on one slice of bread");
     await RecipeStepProvider.createRecipeStep(step);
-    step = RecipeStep(null, recipeId, 2, "Spread jam on the other slice of bread");
+    step =
+        RecipeStep(null, recipeId, 2, "Spread jam on the other slice of bread");
     await RecipeStepProvider.createRecipeStep(step);
     step = RecipeStep(null, recipeId, 3, "Combine both slices of bread");
     await RecipeStepProvider.createRecipeStep(step);
 
-    Recipe hamAndCheese = Recipe(null, "Ham and cheese sandwich", null, 1, "A Ham and cheese sandwich", 1, 5, "minutes", 5, "minutes");
+    Recipe hamAndCheese = Recipe(null, "Ham and cheese sandwich", null, 1,
+        "A Ham and cheese sandwich", 1, 5, "Minutes", 5, "Minutes");
     recipeId = await RecipeProvider.createRecipe(hamAndCheese);
 
     ingredient = Ingredient(null, recipeId, "Bread");
@@ -57,7 +64,8 @@ class Seed {
     await RecipeStepProvider.createRecipeStep(step);
     step = RecipeStep(null, recipeId, 2, "Place cheese on top of ham");
     await RecipeStepProvider.createRecipeStep(step);
-    step = RecipeStep(null, recipeId, 3, "Place bread on top of cheese and serve");
+    step =
+        RecipeStep(null, recipeId, 3, "Place bread on top of cheese and serve");
     await RecipeStepProvider.createRecipeStep(step);
   }
 
