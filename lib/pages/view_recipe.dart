@@ -34,10 +34,9 @@ class ViewRecipeState extends State<ViewRecipe> {
   bool _isLoading = true;
   void _refreshLists() async {
     final recipeData = await RecipeProvider.getRecipeById(widget.recipe.id!);
-    final ingredientData =
-        await IngredientProvider.getAllIngredientsByRecipeId(widget.recipe.id!);
-    final stepData =
-        await RecipeStepProvider.getAllRecipeStepsByRecipeId(widget.recipe.id!);
+    final ingredientData = await IngredientProvider.getAllIngredientsByRecipeId(widget.recipe.id!);
+    final stepData = await RecipeStepProvider.getAllRecipeStepsByRecipeId(widget.recipe.id!);
+    if (!mounted) return;
     setState(() {
       _recipe = recipeData;
       _ingredientList = ingredientData;
@@ -52,43 +51,78 @@ class ViewRecipeState extends State<ViewRecipe> {
     _refreshLists();
   }
 
+  @override
+  Widget build(BuildContext context) {
+    _refreshLists();
+    return Scaffold(
+      backgroundColor: Constants.beige,
+      extendBodyBehindAppBar: true,
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : CustomScrollView(
+              physics: const ClampingScrollPhysics(),
+              slivers: [
+                _buildAppBar(),
+                SliverList(
+                  delegate: SliverChildListDelegate(
+                    [
+                      const SizedBox(height: 16),
+                      _buildServingField(),
+                      const SizedBox(height: 16),
+                      _buildTimeField(),
+                      const SizedBox(height: 16),
+                      _buildDescriptionField(),
+                      const SizedBox(height: 16),
+                      _buildIngredientField(),
+                      const SizedBox(height: 16),
+                      _buildStepField(),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+    );
+  }
+
   Widget _popupMenu() {
     return PopupMenuButton<MenuItem>(
-        onSelected: (value) {
-          if (value == MenuItem.share) {
-          } else if (value == MenuItem.edit) {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EditRecipe(recipe: widget.recipe),
-                ));
-          } else if (value == MenuItem.delete) {
-            showAlertDialog(context);
-          }
-        },
-        itemBuilder: (context) => [
-              const PopupMenuItem(
-                value: MenuItem.share,
-                child: ListTile(
-                  leading: Icon(Icons.share),
-                  title: Text('Share'),
-                ),
-              ),
-              const PopupMenuItem(
-                value: MenuItem.edit,
-                child: ListTile(
-                  leading: Icon(Icons.edit),
-                  title: Text('Edit'),
-                ),
-              ),
-              const PopupMenuItem(
-                value: MenuItem.delete,
-                child: ListTile(
-                  leading: Icon(Icons.delete),
-                  title: Text('Delete'),
-                ),
-              ),
-            ]);
+      onSelected: (value) {
+        if (value == MenuItem.share) {
+        } else if (value == MenuItem.edit) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EditRecipe(recipe: widget.recipe),
+            ),
+          );
+        } else if (value == MenuItem.delete) {
+          showAlertDialog(context);
+        }
+      },
+      itemBuilder: (context) => [
+        const PopupMenuItem(
+          value: MenuItem.share,
+          child: ListTile(
+            leading: Icon(Icons.share),
+            title: Text('Share'),
+          ),
+        ),
+        const PopupMenuItem(
+          value: MenuItem.edit,
+          child: ListTile(
+            leading: Icon(Icons.edit),
+            title: Text('Edit'),
+          ),
+        ),
+        const PopupMenuItem(
+          value: MenuItem.delete,
+          child: ListTile(
+            leading: Icon(Icons.delete),
+            title: Text('Delete'),
+          ),
+        ),
+      ],
+    );
   }
 
   showAlertDialog(BuildContext context) {
@@ -103,18 +137,14 @@ class ViewRecipeState extends State<ViewRecipe> {
       child: const Text("Confirm"),
       onPressed: () {
         deleteRecipe();
-        Navigator.of(context)
-            .push(
-                MaterialPageRoute(builder: (context) => const ViewRecipeList()))
-            .whenComplete(initState);
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ViewRecipeList())).whenComplete(initState);
       },
     );
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
       title: const Text("Delete Recipe"),
-      content:
-          Text("Are you sure you want to delete ${_recipe.first['name']}?"),
+      content: Text("Are you sure you want to delete ${_recipe.first['name']}?"),
       actions: [
         cancelButton,
         continueButton,
@@ -165,7 +195,7 @@ class ViewRecipeState extends State<ViewRecipe> {
               ],
               centerTitle: true,
               title: Text(
-                widget.recipe.name,
+                _recipe.first['name'],
                 style: const TextStyle(fontSize: 30.0),
                 textAlign: TextAlign.center,
               ),
@@ -177,7 +207,7 @@ class ViewRecipeState extends State<ViewRecipe> {
                   children: <Widget>[
                     // maybe add 5px beige container under image to hide line?
                     Image.file(
-                      File(widget.recipe.image!),
+                      File(_recipe.first['image']!),
                       fit: BoxFit.cover,
                     ),
                     Align(
@@ -185,8 +215,7 @@ class ViewRecipeState extends State<ViewRecipe> {
                       child: Container(
                         height: 20,
                         width: MediaQuery.of(context).size.width,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 30, vertical: 0),
+                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 0),
                         decoration: BoxDecoration(
                           color: Constants.beige,
                           borderRadius: const BorderRadius.only(
@@ -221,24 +250,24 @@ class ViewRecipeState extends State<ViewRecipe> {
         ],
         flexibleSpace: FlexibleSpaceBar(
           centerTitle: true,
-          title: Text(widget.recipe.name),
+          title: Text(_recipe.first['name']),
         ),
       );
     }
   }
 
   Widget _buildServingField() {
-    int servings = widget.recipe.servings;
+    int servings = _recipe.first['servings'];
     return Column(children: [
       Text("Servings: $servings"),
     ]);
   }
 
   Widget _buildTimeField() {
-    String prepTimeMeasurement = widget.recipe.prepTimeMeasurement;
-    String cookTimeMeasurement = widget.recipe.cookTimeMeasurement;
-    double prepTime = widget.recipe.prepTime;
-    double cookTime = widget.recipe.cookTime;
+    String prepTimeMeasurement = _recipe.first['prepTimeMeasurement'];
+    String cookTimeMeasurement = _recipe.first['cookTimeMeasurement'];
+    double prepTime = _recipe.first['prepTime'];
+    double cookTime = _recipe.first['cookTime'];
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -255,7 +284,7 @@ class ViewRecipeState extends State<ViewRecipe> {
   }
 
   Widget _buildDescriptionField() {
-    String description = widget.recipe.description;
+    String description = _recipe.first['description'];
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -280,8 +309,7 @@ class ViewRecipeState extends State<ViewRecipe> {
                   color: Constants.secondaryRed,
                   margin: const EdgeInsets.all(15),
                   child: ListTile(
-                    title:
-                        Text('- ${_ingredientList[index]['ingredientName']}'),
+                    title: Text('- ${_ingredientList[index]['ingredientName']}'),
                   ),
                 ),
               ),
@@ -303,39 +331,11 @@ class ViewRecipeState extends State<ViewRecipe> {
                   color: Constants.secondaryRed,
                   margin: const EdgeInsets.all(15),
                   child: ListTile(
-                    title: Text(
-                        '${_stepList[index]['stepNumber']}. ${_stepList[index]['stepDescription']}'),
+                    title: Text('${_stepList[index]['stepNumber']}. ${_stepList[index]['stepDescription']}'),
                   ),
                 ),
               ),
       ],
     );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    _refreshLists();
-    return Scaffold(
-        backgroundColor: Constants.beige,
-        extendBodyBehindAppBar: true,
-        body: CustomScrollView(
-          physics: const ClampingScrollPhysics(),
-          slivers: [
-            _buildAppBar(),
-            SliverList(
-                delegate: SliverChildListDelegate([
-              const SizedBox(height: 16),
-              _buildServingField(),
-              const SizedBox(height: 16),
-              _buildTimeField(),
-              const SizedBox(height: 16),
-              _buildDescriptionField(),
-              const SizedBox(height: 16),
-              _buildIngredientField(),
-              const SizedBox(height: 16),
-              _buildStepField(),
-            ])),
-          ],
-        ));
   }
 }

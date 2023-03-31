@@ -24,6 +24,7 @@ class HomeState extends State<HomePage> {
   void _refreshRecipeList() async {
     final data = await RecipeProvider.getNRecipes(_numOfRecipesDisplayed);
     // await TrendingRecipeProvider.fetchRecipe();
+    if (!mounted) return;
     setState(() {
       _recipeList = data;
       _isLoading = false;
@@ -44,6 +45,7 @@ class HomeState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    _refreshRecipeList();
     return Scaffold(
       backgroundColor: Constants.beige,
       appBar: AppBar(

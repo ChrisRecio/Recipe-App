@@ -5,6 +5,11 @@ import 'package:recipe_app/services/models/shopping_list.dart';
 import '../assets/constants.dart';
 import '../widgets/nav_drawer.dart';
 
+enum MenuItem {
+  clear,
+  share,
+}
+
 class ShoppingList extends StatefulWidget {
   const ShoppingList({super.key});
 
@@ -15,29 +20,22 @@ class ShoppingList extends StatefulWidget {
 }
 
 class ShoppingListState extends State<ShoppingList> {
-  List<Map<String, dynamic>> _shoppingList = [];
-  final List<ShoppingListItem> _staticShoppingList = [
-    ShoppingListItem(1, "1", "Cheese", false),
-    ShoppingListItem(2, "1", "Bread", true),
-    ShoppingListItem(3, "1", "Peanut Butter", false),
-    ShoppingListItem(4, "1", "Jam", false),
-    ShoppingListItem(5, "1", "Butter", false),
-    ShoppingListItem(6, "1", "Cheese", false),
-    ShoppingListItem(7, "1", "Bread", false),
-    ShoppingListItem(8, "1", "Peanut Butter", false),
-    ShoppingListItem(9, "1", "Jam", false),
-    ShoppingListItem(10, "1", "Butter", false),
-  ];
+  List<Map<String, dynamic>> _shoppingListDb = [];
+  List<ShoppingListItem> _shoppingList = [];
 
-  List<ShoppingListItem> _selectedIngredients = [];
-
-  bool _isLoading = true;
   void _refreshShoppingList() async {
     final data = await ShoppingListProvider.getAllShoppingListItem();
-    setState(() {
-      _shoppingList = data;
-      _isLoading = false;
-    });
+    if (!mounted) return;
+    setState(
+      () {
+        _shoppingListDb = data;
+      },
+    );
+    _shoppingList = [];
+    for (int i = 0; i < _shoppingListDb.length; i++) {
+      _shoppingList.add(ShoppingListItem(_shoppingListDb[i]['id'], _shoppingListDb[i]['quantity'], _shoppingListDb[i]['ingredientName'],
+          _shoppingListDb[i]['checked'] == 1 ? true : false));
+    }
   }
 
   @override
@@ -55,6 +53,9 @@ class ShoppingListState extends State<ShoppingList> {
         title: const Text('Shopping List'),
         centerTitle: true,
         backgroundColor: Constants.primaryRed,
+        actions: [
+          _popupMenu(),
+        ],
       ),
       drawer: const NavDrawer(),
       floatingActionButton: FloatingActionButton(
@@ -71,10 +72,10 @@ class ShoppingListState extends State<ShoppingList> {
               itemCount: _shoppingList.length,
               itemBuilder: (context, index) {
                 return ingredientItem(
-                  _shoppingList[index]['id'],
-                  _shoppingList[index]['quantity'],
-                  _shoppingList[index]['ingredientName'],
-                  _shoppingList[index]['checked'],
+                  _shoppingList[index].id!,
+                  _shoppingList[index].quantity,
+                  _shoppingList[index].ingredientName,
+                  _shoppingList[index].checked == true ? 1 : 0,
                   index,
                 );
               },
@@ -83,83 +84,129 @@ class ShoppingListState extends State<ShoppingList> {
               },
             ),
           ),
-          _selectedIngredients.isNotEmpty
-              ? Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 25,
-                    vertical: 10,
-                  ),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: MaterialButton(
-                      color: Colors.green[700],
-                      child: Text(
-                        "Delete (${_selectedIngredients.length})",
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                        ),
-                      ),
-                      onPressed: () {
-                        print(
-                            "Delete List Lenght: ${_selectedIngredients.length}");
-                      },
-                    ),
-                  ),
-                )
-              : Container(),
         ],
       ),
     );
   }
 
-  Widget ingredientItem(
-      int id, String quantity, String ingredient, int checked, int index) {
-    return ListTile(
-      title: Text(
-        ingredient,
-        style: checked == 1
-            ? const TextStyle(
-                fontWeight: FontWeight.w500,
-                decoration: TextDecoration.lineThrough)
-            : const TextStyle(
-                fontWeight: FontWeight.w500,
-              ),
-      ),
-      trailing: checked == 1
-          ? Icon(
-              Icons.check_circle,
-              color: Constants.green,
-            )
-          : const Icon(
-              Icons.check_circle_outline,
-              color: Colors.grey,
-            ),
-      onTap: () {
+  Widget ingredientItem(int id, String quantity, String ingredient, int checked, int index) {
+    return Dismissible(
+      key: ValueKey(id),
+      onDismissed: (direction) {
         setState(
           () {
-            // Convert 1/0 to T/F
-            bool check = _shoppingList[index]['checked'] == 1 ? true : false;
+            _shoppingList.removeAt(index);
+            ShoppingListProvider.deleteShoppingListItem(id);
+            _refreshShoppingList();
 
-            // Update item in db
-            ShoppingListItem item = ShoppingListItem(
-                _shoppingList[index]['id'],
-                _shoppingList[index]['quantity'],
-                _shoppingList[index]['ingredientName'],
-                !check);
-            ShoppingListProvider.updateShoppingListItem(item);
-
-            // Set _selectedIngredients
-            if (!check == true) {
-              _selectedIngredients
-                  .add(ShoppingListItem(id, quantity, ingredient, true));
-            } else if (!check == false) {
-              _selectedIngredients.removeWhere((element) =>
-                  element.ingredientName == _shoppingList[index]['checked']);
-            }
+            final message = '$ingredient removed';
+            final snackBar = SnackBar(
+              content: Text(
+                message,
+                style: const TextStyle(fontSize: 20),
+              ),
+              backgroundColor: Constants.primaryRed,
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
           },
         );
       },
+      background: Container(color: Constants.primaryRed),
+      child: ListTile(
+        title: Text(
+          ingredient,
+          style: checked == 1
+              ? const TextStyle(fontWeight: FontWeight.w500, decoration: TextDecoration.lineThrough)
+              : const TextStyle(
+                  fontWeight: FontWeight.w500,
+                ),
+        ),
+        trailing: checked == 1
+            ? Icon(
+                Icons.check_circle,
+                color: Constants.green,
+              )
+            : const Icon(
+                Icons.check_circle_outline,
+                color: Colors.grey,
+              ),
+        onTap: () {
+          setState(
+            () {
+              // Convert 1/0 to T/F
+              // bool check = _shoppingList[index].checked == 1 ? true : false;
+
+              // Update item in db
+              ShoppingListItem item = ShoppingListItem(
+                  _shoppingList[index].id, _shoppingList[index].quantity, _shoppingList[index].ingredientName, !_shoppingList[index].checked);
+              ShoppingListProvider.updateShoppingListItem(item);
+            },
+          );
+        },
+      ),
     );
   }
+
+  Widget _popupMenu() {
+    return PopupMenuButton<MenuItem>(
+      onSelected: (value) {
+        if (value == MenuItem.share) {
+        } else if (value == MenuItem.clear) {
+          showAlertDialog(context);
+        } else if (value == MenuItem.share) {}
+      },
+      itemBuilder: (context) => [
+        const PopupMenuItem(
+          value: MenuItem.clear,
+          child: ListTile(
+            leading: Icon(Icons.share),
+            title: Text('Share'),
+          ),
+        ),
+        const PopupMenuItem(
+          value: MenuItem.share,
+          child: ListTile(
+            leading: Icon(Icons.delete),
+            title: Text('Reset List'),
+          ),
+        ),
+      ],
+    );
+  }
+
+  showAlertDialog(BuildContext context) {
+    // set up the buttons
+    Widget cancelButton = TextButton(
+      child: const Text("Cancel"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+    Widget continueButton = TextButton(
+      child: const Text("Confirm"),
+      onPressed: () {
+        resetShoppingList();
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: const Text("Reset Shopping List"),
+      content: const Text("Are you sure you want to reset the shopping list?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  resetShoppingList() async {}
 }

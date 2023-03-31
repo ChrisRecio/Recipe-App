@@ -17,12 +17,12 @@ class ViewRecipeList extends StatefulWidget {
 
 class ViewRecipeListState extends State<ViewRecipeList> {
   List<Map<String, dynamic>> _recipeList = [];
-  List<Map<String, dynamic>> _searchTerms = [];
 
   bool _isLoading = true;
   void _refreshRecipeList() async {
     final data = await RecipeProvider.getAllRecipes();
-    _searchTerms = await RecipeProvider.getAllRecipeNames();
+    _recipeList = data;
+    if (!mounted) return;
     setState(() {
       _recipeList = data;
       _isLoading = false;
@@ -40,28 +40,22 @@ class ViewRecipeListState extends State<ViewRecipeList> {
     _refreshRecipeList();
     return Scaffold(
       backgroundColor: Constants.beige,
-      appBar: AppBar(
-          title: const Text('Recipe List'),
-          backgroundColor: Constants.primaryRed,
-          centerTitle: true,
-          actions: [
-            IconButton(
-              onPressed: () {
-                // print(_searchTerms);
-                showSearch(
-                    context: context,
-                    // delegate to customize the search bar
-                    delegate: RecipeListSearchDelegate());
-              },
-              icon: const Icon(Icons.search),
-            )
-          ]),
+      appBar: AppBar(title: const Text('Recipe List'), backgroundColor: Constants.primaryRed, centerTitle: true, actions: [
+        IconButton(
+          onPressed: () {
+            // print(_searchTerms);
+            showSearch(
+                context: context,
+                // delegate to customize the search bar
+                delegate: RecipeListSearchDelegate());
+          },
+          icon: const Icon(Icons.search),
+        )
+      ]),
       drawer: const NavDrawer(),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Scrollbar(
-              child: recipeGridView(
-                  context, _recipeList, 2, Axis.vertical, false)),
+          : Scrollbar(child: recipeGridView(context, _recipeList, 2, Axis.vertical, false)),
     );
   }
 }

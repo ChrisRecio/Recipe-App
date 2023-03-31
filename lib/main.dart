@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
             selectionColor: Constants.textHighlightRed,
             selectionHandleColor: Constants.secondaryRed,
           )),
-      home: HomePage(),
+      home: const HomePage(),
     );
   }
 }
