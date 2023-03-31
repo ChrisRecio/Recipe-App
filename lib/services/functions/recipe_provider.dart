@@ -14,7 +14,8 @@ class RecipeProvider {
     final db = await DbManager.db();
 
     final data = recipe.toMap();
-    final id = await db.insert('Recipe', data, conflictAlgorithm: ConflictAlgorithm.replace);
+    final id = await db.insert('Recipe', data,
+        conflictAlgorithm: ConflictAlgorithm.replace);
     return id;
   }
 
@@ -30,14 +31,21 @@ class RecipeProvider {
     return db.rawQuery("SELECT name FROM Recipe");
   }
 
+  // Get n Recipes
+  static Future<List<Map<String, Object?>>> getNRecipes(int n) async {
+    final db = await DbManager.db();
+    return db.rawQuery("SELECT * FROM Recipe LIMIT $n");
+  }
+
   // Get Recipe by Id
-  static Future<List<Map<String, dynamic>>> getRecipeById(int id) async {
+  static Future<dynamic> getRecipeById(int id) async {
     final db = await DbManager.db();
     return db.query('Recipe', where: "id = ?", whereArgs: [id], limit: 1);
   }
 
   // Search Recipes by name
-  static Future<List<Map<String, dynamic>>> searchRecipeByName(String name) async {
+  static Future<List<Map<String, dynamic>>> searchRecipeByName(
+      String name) async {
     final db = await DbManager.db();
     return db.query('Recipe', where: "name LIKE ?", whereArgs: ['%$name%']);
   }
@@ -55,8 +63,10 @@ class RecipeProvider {
     final db = await DbManager.db();
     await db.delete('Recipe', where: "id = ?", whereArgs: [recipeId]);
 
-    final ingredientData = await IngredientProvider.getAllIngredientByRecipeId(recipeId);
-    final stepData = await RecipeStepProvider.getAllRecipeStepsByRecipeId(recipeId);
+    final ingredientData =
+        await IngredientProvider.getAllIngredientsByRecipeId(recipeId);
+    final stepData =
+        await RecipeStepProvider.getAllRecipeStepsByRecipeId(recipeId);
 
     for (int i = 0; i < ingredientData.length; i++) {
       await IngredientProvider.deleteIngredient(ingredientData[i]['id']);

@@ -1,5 +1,5 @@
 // SQL
-// CREATE TABLE IF NOT EXISTS Ingredient(id INTEGER NOT NULL PRIMARY KEY autoincrement, recipe_id INTEGER NOT NULL, ingredient_name TEXT NOT NULL);
+// CREATE TABLE IF NOT EXISTS Ingredient(id INTEGER NOT NULL PRIMARY KEY autoincrement, recipeId INTEGER NOT NULL, ingredientName TEXT NOT NULL, FOREIGN KEY(recipeId) REFERENCES Recipe(id));
 
 class Ingredient {
   int? _id;

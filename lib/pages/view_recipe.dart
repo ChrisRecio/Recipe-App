@@ -27,14 +27,18 @@ class ViewRecipe extends StatefulWidget {
 }
 
 class ViewRecipeState extends State<ViewRecipe> {
+  List<Map<String, dynamic>> _recipe = [];
   List<Map<String, dynamic>> _ingredientList = [];
   List<Map<String, dynamic>> _stepList = [];
 
   bool _isLoading = true;
   void _refreshLists() async {
-    final ingredientData = await IngredientProvider.getAllIngredientByRecipeId(widget.recipe.id!);
+    final recipeData = await RecipeProvider.getRecipeById(widget.recipe.id!);
+    final ingredientData = await IngredientProvider.getAllIngredientsByRecipeId(widget.recipe.id!);
     final stepData = await RecipeStepProvider.getAllRecipeStepsByRecipeId(widget.recipe.id!);
+    if (!mounted) return;
     setState(() {
+      _recipe = recipeData;
       _ingredientList = ingredientData;
       _stepList = stepData;
       _isLoading = false;
@@ -47,43 +51,78 @@ class ViewRecipeState extends State<ViewRecipe> {
     _refreshLists();
   }
 
+  @override
+  Widget build(BuildContext context) {
+    _refreshLists();
+    return Scaffold(
+      backgroundColor: Constants.beige,
+      extendBodyBehindAppBar: true,
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : CustomScrollView(
+              physics: const ClampingScrollPhysics(),
+              slivers: [
+                _buildAppBar(),
+                SliverList(
+                  delegate: SliverChildListDelegate(
+                    [
+                      const SizedBox(height: 16),
+                      _buildServingField(),
+                      const SizedBox(height: 16),
+                      _buildTimeField(),
+                      const SizedBox(height: 16),
+                      _buildDescriptionField(),
+                      const SizedBox(height: 16),
+                      _buildIngredientField(),
+                      const SizedBox(height: 16),
+                      _buildStepField(),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+    );
+  }
+
   Widget _popupMenu() {
     return PopupMenuButton<MenuItem>(
-        onSelected: (value) {
-          if (value == MenuItem.share) {
-          } else if (value == MenuItem.edit) {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EditRecipe(recipe: widget.recipe),
-                ));
-          } else if (value == MenuItem.delete) {
-            showAlertDialog(context);
-          }
-        },
-        itemBuilder: (context) => [
-              const PopupMenuItem(
-                value: MenuItem.share,
-                child: ListTile(
-                  leading: Icon(Icons.share),
-                  title: Text('Share'),
-                ),
-              ),
-              const PopupMenuItem(
-                value: MenuItem.edit,
-                child: ListTile(
-                  leading: Icon(Icons.edit),
-                  title: Text('Edit'),
-                ),
-              ),
-              const PopupMenuItem(
-                value: MenuItem.delete,
-                child: ListTile(
-                  leading: Icon(Icons.delete),
-                  title: Text('Delete'),
-                ),
-              ),
-            ]);
+      onSelected: (value) {
+        if (value == MenuItem.share) {
+        } else if (value == MenuItem.edit) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EditRecipe(recipe: widget.recipe),
+            ),
+          );
+        } else if (value == MenuItem.delete) {
+          showAlertDialog(context);
+        }
+      },
+      itemBuilder: (context) => [
+        const PopupMenuItem(
+          value: MenuItem.share,
+          child: ListTile(
+            leading: Icon(Icons.share),
+            title: Text('Share'),
+          ),
+        ),
+        const PopupMenuItem(
+          value: MenuItem.edit,
+          child: ListTile(
+            leading: Icon(Icons.edit),
+            title: Text('Edit'),
+          ),
+        ),
+        const PopupMenuItem(
+          value: MenuItem.delete,
+          child: ListTile(
+            leading: Icon(Icons.delete),
+            title: Text('Delete'),
+          ),
+        ),
+      ],
+    );
   }
 
   showAlertDialog(BuildContext context) {
@@ -105,7 +144,7 @@ class ViewRecipeState extends State<ViewRecipe> {
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
       title: const Text("Delete Recipe"),
-      content: Text("Are you sure you want to delete ${widget.recipe.name}?"),
+      content: Text("Are you sure you want to delete ${_recipe.first['name']}?"),
       actions: [
         cancelButton,
         continueButton,
@@ -129,60 +168,69 @@ class ViewRecipeState extends State<ViewRecipe> {
     String? image = widget.recipe.image;
 
     if (image != null) {
-      return SliverAppBar(
-        primary: true,
-        pinned: true,
-        expandedHeight: MediaQuery.of(context).size.height * 0.35,
-        backgroundColor: Constants.primaryRed,
-        actions: [
-          _popupMenu(),
-        ],
-        leading: InkWell(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: Icon(
-            Icons.arrow_back,
-            color: Constants.white,
-          ),
-        ),
-        flexibleSpace: FlexibleSpaceBar(
-          stretchModes: const <StretchMode>[
-            StretchMode.zoomBackground,
-            StretchMode.fadeTitle,
-          ],
-          centerTitle: true,
-          title: Text(
-            widget.recipe.name,
-            style: const TextStyle(fontSize: 30.0),
-            textAlign: TextAlign.center,
-          ),
-          collapseMode: CollapseMode.pin,
-          background: Stack(
-            fit: StackFit.expand,
-            children: <Widget>[
-              Image.file(
-                File(widget.recipe.image!),
-                fit: BoxFit.cover,
+      return SliverLayoutBuilder(
+        builder: (BuildContext context, constraints) {
+          final scrolled = constraints.scrollOffset > 0;
+          return SliverAppBar(
+            primary: true,
+            pinned: true,
+            expandedHeight: MediaQuery.of(context).size.height * 0.35,
+            backgroundColor: scrolled ? Constants.primaryRed : Constants.beige,
+            actions: [
+              _popupMenu(),
+            ],
+            leading: InkWell(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Icon(
+                Icons.arrow_back,
+                color: Constants.white,
               ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  height: 20,
-                  width: MediaQuery.of(context).size.width,
-                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 0),
-                  decoration: BoxDecoration(
-                    color: Constants.beige,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(35),
-                      topRight: Radius.circular(35),
+            ),
+            flexibleSpace: FlexibleSpaceBar(
+              stretchModes: const <StretchMode>[
+                StretchMode.zoomBackground,
+                StretchMode.fadeTitle,
+              ],
+              centerTitle: true,
+              title: Text(
+                _recipe.first['name'],
+                style: const TextStyle(fontSize: 30.0),
+                textAlign: TextAlign.center,
+              ),
+              collapseMode: CollapseMode.pin,
+              background: Container(
+                color: Constants.beige,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: <Widget>[
+                    // maybe add 5px beige container under image to hide line?
+                    Image.file(
+                      File(_recipe.first['image']!),
+                      fit: BoxFit.cover,
                     ),
-                  ),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        height: 20,
+                        width: MediaQuery.of(context).size.width,
+                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 0),
+                        decoration: BoxDecoration(
+                          color: Constants.beige,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(35),
+                            topRight: Radius.circular(35),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       );
     } else {
       return SliverAppBar(
@@ -202,24 +250,24 @@ class ViewRecipeState extends State<ViewRecipe> {
         ],
         flexibleSpace: FlexibleSpaceBar(
           centerTitle: true,
-          title: Text(widget.recipe.name),
+          title: Text(_recipe.first['name']),
         ),
       );
     }
   }
 
   Widget _buildServingField() {
-    int servings = widget.recipe.servings;
+    int servings = _recipe.first['servings'];
     return Column(children: [
       Text("Servings: $servings"),
     ]);
   }
 
   Widget _buildTimeField() {
-    String prepTimeMeasurement = widget.recipe.prepTimeMeasurement;
-    String cookTimeMeasurement = widget.recipe.cookTimeMeasurement;
-    int prepTime = widget.recipe.prepTime;
-    int cookTime = widget.recipe.cookTime;
+    String prepTimeMeasurement = _recipe.first['prepTimeMeasurement'];
+    String cookTimeMeasurement = _recipe.first['cookTimeMeasurement'];
+    double prepTime = _recipe.first['prepTime'];
+    double cookTime = _recipe.first['cookTime'];
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -235,6 +283,18 @@ class ViewRecipeState extends State<ViewRecipe> {
     );
   }
 
+  Widget _buildDescriptionField() {
+    String description = _recipe.first['description'];
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text("Description"),
+        Text(description),
+      ],
+    );
+  }
+
   Widget _buildIngredientField() {
     return Column(
       children: [
@@ -246,11 +306,13 @@ class ViewRecipeState extends State<ViewRecipe> {
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemBuilder: (context, index) => Card(
-                    color: Constants.secondaryRed,
-                    margin: const EdgeInsets.all(15),
-                    child: ListTile(
-                      title: Text('- ${_ingredientList[index]['ingredientName']}'),
-                    ))),
+                  color: Constants.secondaryRed,
+                  margin: const EdgeInsets.all(15),
+                  child: ListTile(
+                    title: Text('- ${_ingredientList[index]['ingredientName']}'),
+                  ),
+                ),
+              ),
       ],
     );
   }
@@ -266,43 +328,14 @@ class ViewRecipeState extends State<ViewRecipe> {
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemBuilder: (context, index) => Card(
-                    color: Constants.secondaryRed,
-                    margin: const EdgeInsets.all(15),
-                    child: ListTile(
-                      title: Text('${_stepList[index]['stepNumber']}. ${_stepList[index]['stepDescription']}'),
-                    ))),
+                  color: Constants.secondaryRed,
+                  margin: const EdgeInsets.all(15),
+                  child: ListTile(
+                    title: Text('${_stepList[index]['stepNumber']}. ${_stepList[index]['stepDescription']}'),
+                  ),
+                ),
+              ),
       ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'View Recipe',
-      theme: ThemeData(
-        brightness: Brightness.light,
-        colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Constants.secondaryRed),
-      ),
-      home: Scaffold(
-          backgroundColor: Constants.beige,
-          extendBodyBehindAppBar: true,
-          body: CustomScrollView(
-            physics: const ClampingScrollPhysics(),
-            slivers: [
-              _buildAppBar(),
-              SliverList(
-                  delegate: SliverChildListDelegate([
-                const SizedBox(height: 16),
-                _buildServingField(),
-                const SizedBox(height: 16),
-                _buildTimeField(),
-                const SizedBox(height: 16),
-                _buildIngredientField(),
-                const SizedBox(height: 16),
-                _buildStepField(),
-              ])),
-            ],
-          )),
     );
   }
 }

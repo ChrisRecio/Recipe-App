@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:recipe_app/main.dart';
 import 'package:recipe_app/pages/add_recipe.dart';
 import 'package:recipe_app/pages/view_recipe_list.dart';
 
 import '../assets/constants.dart';
+import '../pages/home.dart';
 import '../pages/settings.dart';
+import '../pages/view_shopping_list.dart';
 
 class NavDrawer extends StatelessWidget {
   const NavDrawer({Key? key}) : super(key: key);
@@ -40,7 +41,7 @@ class NavDrawer extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(
-                  height: 5,
+                  height: 3,
                 ),
                 const Center(
                   child: Text(
@@ -61,22 +62,34 @@ class NavDrawer extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.home_outlined),
               title: const Text('Home'),
-              onTap: () => Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomePage(title: 'Recipe List'))),
+              onTap: () => Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => const HomePage())),
             ),
             ListTile(
               leading: const Icon(Icons.local_pizza_outlined),
               title: const Text('Recipe List'),
-              onTap: () => Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const ViewRecipeList())),
+              onTap: () => Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                      builder: (context) => const ViewRecipeList())),
             ),
             ListTile(
               leading: const Icon(Icons.plus_one_outlined),
               title: const Text('Add New Recipe'),
-              onTap: () => Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const AddRecipe())),
+              onTap: () => Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => const AddRecipe())),
+            ),
+            ListTile(
+              leading: const Icon(Icons.shopping_cart),
+              title: const Text('Shopping List'),
+              onTap: () => Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                      builder: (context) => const ShoppingList())),
             ),
             ListTile(
               leading: const Icon(Icons.settings),
               title: const Text('Settings'),
-              onTap: () => Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const Settings())),
+              onTap: () => Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => const Settings())),
             ),
           ],
         ),
