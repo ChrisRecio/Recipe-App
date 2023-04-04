@@ -320,14 +320,8 @@ class EditRecipeState extends State<EditRecipe> {
       backgroundColor: Constants.beige,
       appBar: AppBar(
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            // Routing acts strange when swiping back on physical device
-            // Must fix
-            onPressed: () => Navigator.of(context)
-                .pop() /*Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const ViewRecipeList()),
-                (route) => route.isFirst)*/
-            , /*Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ViewRecipeList()))*/
-          ),
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () => Navigator.of(context).pop()),
           title: Text('Edit $_name'),
           centerTitle: true,
           backgroundColor: Constants.primaryRed),

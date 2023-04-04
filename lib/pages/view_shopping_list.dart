@@ -6,7 +6,7 @@ import '../assets/constants.dart';
 import '../widgets/nav_drawer.dart';
 
 enum MenuItem {
-  clear,
+  reset,
   share,
 }
 
@@ -22,6 +22,8 @@ class ShoppingList extends StatefulWidget {
 class ShoppingListState extends State<ShoppingList> {
   List<Map<String, dynamic>> _shoppingListDb = [];
   List<ShoppingListItem> _shoppingList = [];
+  final _formKey = GlobalKey<FormState>();
+  late String _quantity, _itemName;
 
   void _refreshShoppingList() async {
     final data = await ShoppingListProvider.getAllShoppingListItem();
@@ -33,7 +35,10 @@ class ShoppingListState extends State<ShoppingList> {
     );
     _shoppingList = [];
     for (int i = 0; i < _shoppingListDb.length; i++) {
-      _shoppingList.add(ShoppingListItem(_shoppingListDb[i]['id'], _shoppingListDb[i]['quantity'], _shoppingListDb[i]['ingredientName'],
+      _shoppingList.add(ShoppingListItem(
+          _shoppingListDb[i]['id'],
+          _shoppingListDb[i]['quantity'],
+          _shoppingListDb[i]['ingredientName'],
           _shoppingListDb[i]['checked'] == 1 ? true : false));
     }
   }
@@ -63,6 +68,7 @@ class ShoppingListState extends State<ShoppingList> {
         child: const Icon(Icons.add_sharp, size: 45),
         onPressed: () {
           print("here");
+          addItemForm(context);
         },
       ),
       body: Column(
@@ -89,7 +95,76 @@ class ShoppingListState extends State<ShoppingList> {
     );
   }
 
-  Widget ingredientItem(int id, String quantity, String ingredient, int checked, int index) {
+  addItemForm(BuildContext context) {
+    AlertDialog alert = AlertDialog(
+      content: Stack(
+        children: <Widget>[
+          Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Quantity',
+                    icon: Icon(Icons.numbers),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter the quantity';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) => setState(() => _quantity = value!),
+                ),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Name',
+                    icon: Icon(Icons.fastfood),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter the name of the ingredient';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) => setState(() => _itemName = value!),
+                ),
+                MaterialButton(
+                  color: Constants.green,
+                  child: Text("Submit",
+                      style: TextStyle(
+                          color: Constants.white, fontWeight: FontWeight.bold)),
+                  onPressed: () async {
+                    final isValid = _formKey.currentState?.validate();
+
+                    if (isValid == true) {
+                      _formKey.currentState?.save();
+                    }
+
+                    ShoppingListItem item =
+                        ShoppingListItem(null, _quantity, _itemName, false);
+                    ShoppingListProvider.createShoppingListItem(item);
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  Widget ingredientItem(
+      int id, String quantity, String ingredient, int checked, int index) {
     return Dismissible(
       key: ValueKey(id),
       onDismissed: (direction) {
@@ -116,7 +191,9 @@ class ShoppingListState extends State<ShoppingList> {
         title: Text(
           ingredient,
           style: checked == 1
-              ? const TextStyle(fontWeight: FontWeight.w500, decoration: TextDecoration.lineThrough)
+              ? const TextStyle(
+                  fontWeight: FontWeight.w500,
+                  decoration: TextDecoration.lineThrough)
               : const TextStyle(
                   fontWeight: FontWeight.w500,
                 ),
@@ -138,7 +215,10 @@ class ShoppingListState extends State<ShoppingList> {
 
               // Update item in db
               ShoppingListItem item = ShoppingListItem(
-                  _shoppingList[index].id, _shoppingList[index].quantity, _shoppingList[index].ingredientName, !_shoppingList[index].checked);
+                  _shoppingList[index].id,
+                  _shoppingList[index].quantity,
+                  _shoppingList[index].ingredientName,
+                  !_shoppingList[index].checked);
               ShoppingListProvider.updateShoppingListItem(item);
             },
           );
@@ -151,20 +231,20 @@ class ShoppingListState extends State<ShoppingList> {
     return PopupMenuButton<MenuItem>(
       onSelected: (value) {
         if (value == MenuItem.share) {
-        } else if (value == MenuItem.clear) {
+        } else if (value == MenuItem.reset) {
           showAlertDialog(context);
-        } else if (value == MenuItem.share) {}
+        }
       },
       itemBuilder: (context) => [
         const PopupMenuItem(
-          value: MenuItem.clear,
+          value: MenuItem.share,
           child: ListTile(
             leading: Icon(Icons.share),
             title: Text('Share'),
           ),
         ),
         const PopupMenuItem(
-          value: MenuItem.share,
+          value: MenuItem.reset,
           child: ListTile(
             leading: Icon(Icons.delete),
             title: Text('Reset List'),
@@ -186,6 +266,7 @@ class ShoppingListState extends State<ShoppingList> {
       child: const Text("Confirm"),
       onPressed: () {
         resetShoppingList();
+        Navigator.of(context).pop();
       },
     );
 
@@ -208,5 +289,7 @@ class ShoppingListState extends State<ShoppingList> {
     );
   }
 
-  resetShoppingList() async {}
+  resetShoppingList() async {
+    await ShoppingListProvider.deleteAllShoppingListItems();
+  }
 }

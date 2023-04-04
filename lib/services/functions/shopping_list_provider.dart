@@ -11,7 +11,8 @@ class ShoppingListProvider {
     final db = await DbManager.db();
 
     final data = item.toMap();
-    final id = await db.insert('ShoppingList', data, conflictAlgorithm: ConflictAlgorithm.replace);
+    final id = await db.insert('ShoppingList', data,
+        conflictAlgorithm: ConflictAlgorithm.replace);
     return id;
   }
 
@@ -27,11 +28,18 @@ class ShoppingListProvider {
     await db.delete('ShoppingList', where: "id = ?", whereArgs: [id]);
   }
 
+  // Delete all ShoppingListItems
+  static Future<void> deleteAllShoppingListItems() async {
+    final db = await DbManager.db();
+    db.rawQuery("DELETE FROM ShoppingList");
+  }
+
   // Update ShoppingListItem
   static Future<void> updateShoppingListItem(ShoppingListItem item) async {
     final db = await DbManager.db();
     final data = item.toMap();
 
-    await db.update('ShoppingList', data, where: "id = ?", whereArgs: [item.id]);
+    await db
+        .update('ShoppingList', data, where: "id = ?", whereArgs: [item.id]);
   }
 }

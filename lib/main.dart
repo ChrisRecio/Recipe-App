@@ -16,13 +16,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Recipe List',
       theme: ThemeData(
-          // fontFamily: '',
-          primarySwatch: Constants.getMaterialColor(Constants.darkBeige),
-          textSelectionTheme: TextSelectionThemeData(
-            cursorColor: Constants.darkBeige,
-            selectionColor: Constants.textHighlightRed,
-            selectionHandleColor: Constants.secondaryRed,
-          )),
+        // fontFamily: '',
+        primarySwatch: Constants.getMaterialColor(Constants.darkBeige),
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: Constants.darkBeige,
+          selectionColor: Constants.textHighlightRed,
+          selectionHandleColor: Constants.secondaryRed,
+        ),
+      ),
       home: const HomePage(),
     );
   }
